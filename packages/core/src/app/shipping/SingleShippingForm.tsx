@@ -148,13 +148,36 @@ class SingleShippingForm extends PureComponent<
         } = this.props;
 
         if (newShippingFormRenderTimestamp !== shippingFormRenderTimestamp) {
+            // Map the address to form values
+            const addressFormValues = mapAddressToFormValues(
+                getFields(shippingAddress && shippingAddress.countryCode),
+                shippingAddress,
+            );
+
+            // Reset custom fields if they exist
+            if (addressFormValues.customFields) {
+                // Get the list of custom form fields
+                const customFields = getFields(shippingAddress && shippingAddress.countryCode)
+                    .filter(field => field.custom);
+                
+                // Reset each custom field to empty values based on its type
+                customFields.forEach(field => {
+                    if (field.fieldType === 'checkbox') {
+                        addressFormValues.customFields[field.name] = [];
+                    } else if (field.type === 'date') {
+                        addressFormValues.customFields[field.name] = '';
+                    } else if (field.type === 'integer') {
+                        addressFormValues.customFields[field.name] = '';
+                    } else {
+                        addressFormValues.customFields[field.name] = '';
+                    }
+                });
+            }
+
             setValues({
                 billingSameAsShipping: isBillingSameAsShipping,
                 orderComment: customerMessage,
-                shippingAddress: mapAddressToFormValues(
-                    getFields(shippingAddress && shippingAddress.countryCode),
-                    shippingAddress,
-                ),
+                shippingAddress: addressFormValues,
             });
         }
     }
@@ -237,15 +260,20 @@ class SingleShippingForm extends PureComponent<
     }
 
     private shouldDisableSubmit: () => boolean = () => {
-        const { isLoading, consignments, isValid } = this.props;
-
+        const { isLoading, consignments } = this.props;
         const { isUpdatingShippingData } = this.state;
 
+<<<<<<< HEAD
+        // Don't check form validity here - let the form submit and let validation 
+        // errors be displayed naturally
+        return isLoading || isUpdatingShippingData || !hasSelectedShippingOptions(consignments);
+=======
         if (!isValid) {
             return false;
         }
 
         return isLoading || isUpdatingShippingData || !hasSelectedShippingOptions(consignments) || !isSelectedShippingOptionValid(consignments);
+>>>>>>> 32f569aee3731cb52bb1146d30374e7d75d1133d
     };
 
     private handleFieldChange: (name: string) => void = async (name) => {
@@ -303,12 +331,35 @@ class SingleShippingForm extends PureComponent<
         try {
             await updateAddress(address);
 
+            // Map the address to form values
+            const addressFormValues = mapAddressToFormValues(
+                this.getFields(address.countryCode),
+                address,
+            );
+
+            // Reset custom fields if they exist
+            if (addressFormValues.customFields) {
+                // Get the list of custom form fields
+                const customFields = this.getFields(address.countryCode)
+                    .filter(field => field.custom);
+                
+                // Reset each custom field to empty values based on its type
+                customFields.forEach(field => {
+                    if (field.fieldType === 'checkbox') {
+                        addressFormValues.customFields[field.name] = [];
+                    } else if (field.type === 'date') {
+                        addressFormValues.customFields[field.name] = '';
+                    } else if (field.type === 'integer') {
+                        addressFormValues.customFields[field.name] = '';
+                    } else {
+                        addressFormValues.customFields[field.name] = '';
+                    }
+                });
+            }
+
             setValues({
                 ...values,
-                shippingAddress: mapAddressToFormValues(
-                    this.getFields(address.countryCode),
-                    address,
-                ),
+                shippingAddress: addressFormValues,
             });
         } catch (error) {
             onUnhandledError(error);
@@ -325,12 +376,35 @@ class SingleShippingForm extends PureComponent<
         try {
             const address = await deleteConsignments();
 
+            // Map the address to form values
+            const addressFormValues = mapAddressToFormValues(
+                this.getFields(address && address.countryCode),
+                address,
+            );
+
+            // Reset custom fields if they exist
+            if (addressFormValues.customFields) {
+                // Get the list of custom form fields
+                const customFields = this.getFields(address && address.countryCode)
+                    .filter(field => field.custom);
+                
+                // Reset each custom field to empty values based on its type
+                customFields.forEach(field => {
+                    if (field.fieldType === 'checkbox') {
+                        addressFormValues.customFields[field.name] = [];
+                    } else if (field.type === 'date') {
+                        addressFormValues.customFields[field.name] = '';
+                    } else if (field.type === 'integer') {
+                        addressFormValues.customFields[field.name] = '';
+                    } else {
+                        addressFormValues.customFields[field.name] = '';
+                    }
+                });
+            }
+
             setValues({
                 ...values,
-                shippingAddress: mapAddressToFormValues(
-                    this.getFields(address && address.countryCode),
-                    address,
-                ),
+                shippingAddress: addressFormValues,
             });
         } catch (e) {
             onUnhandledError(e);

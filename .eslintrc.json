@@ -76,10 +76,7 @@
       "extends": [
         "plugin:testing-library/react",
         "plugin:jest-dom/recommended"
-      ],
-      "rules": {
-        "@typescript-eslint/consistent-type-assertions": "off"
-      }
+      ]
     }
   ]
 }
