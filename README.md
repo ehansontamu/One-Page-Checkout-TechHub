@@ -1,3 +1,8 @@
+## TechHub
+
+This version of the optimized one page checkout has been configured/customized for the use of TAMU TechHub
+
+
 # Checkout JS
 
 Checkout JS is a browser-based application providing a seamless UI for BigCommerce shoppers to complete their checkout. It is also known as [Optimized One-Page Checkout](https://support.bigcommerce.com/s/article/Optimized-Single-Page-Checkout), which is currently the recommended checkout option for all BigCommerce stores.
@@ -66,7 +71,3 @@ npm run dev:server
 ```
 
 And enter the local URL for `auto-loader-dev.js` in Checkout Settings, e.g `http://127.0.0.1:8080/auto-loader-dev.js`
-
-## TechHub
-
-This version of the optimized one page checkout has been configured/customized for the use of TAMU TechHub
