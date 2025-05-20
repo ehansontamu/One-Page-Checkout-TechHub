@@ -1,4 +1,4 @@
-# TechHub
+# TechHub Checkout
 
 This version of the optimized one page checkout has been configured/customized for the use of TAMU TechHub
 
