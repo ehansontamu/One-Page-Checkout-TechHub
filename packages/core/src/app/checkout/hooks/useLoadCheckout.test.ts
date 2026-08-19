@@ -10,7 +10,11 @@ jest.mock('@bigcommerce/checkout/contexts');
 
 describe('useLoadCheckout', () => {
     const mockCheckoutService = {
+        deleteConsignment: jest.fn(),
+        hydrateInitialState: jest.fn(),
         loadCheckout: jest.fn(),
+        updateBillingAddress: jest.fn(),
+        updateCheckout: jest.fn(),
     };
     const mockExtensionService = {
         loadExtensions: jest.fn(),
@@ -26,6 +30,8 @@ describe('useLoadCheckout', () => {
             checkoutState: {
                 data: {
                     getCheckout: () => undefined,
+                    getBillingAddress: () => undefined,
+                    getConsignments: () => [],
                 },
             },
         });
@@ -79,6 +85,8 @@ describe('useLoadCheckout', () => {
         const mockCheckoutState = {
             data: {
                 getCheckout,
+                getBillingAddress: () => undefined,
+                getConsignments: () => [],
             },
         };
 

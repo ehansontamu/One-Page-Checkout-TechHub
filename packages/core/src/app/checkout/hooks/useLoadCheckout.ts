@@ -14,7 +14,9 @@ export const useLoadCheckout = (
         checkoutService,
         checkoutState: { data },
     } = useCheckout(() => undefined);
-    const [isLoadingCheckout, setIsLoadingCheckout] = useState(!data.getCheckout());
+    // Even when BigCommerce has preloaded checkout data, TechHub must reset that state before
+    // rendering the form. Start in the loading state for every page mount.
+    const [isLoadingCheckout, setIsLoadingCheckout] = useState(true);
     const { extensionService } = useExtensions();
 
     const fetchData = async () => {
@@ -78,26 +80,24 @@ export const useLoadCheckout = (
     const hydrateInitialState = async (initialState: CheckoutInitialState) => {
         await yieldToMain();
         await checkoutService.hydrateInitialState(initialState);
-        await resetCheckoutSession();
-        setIsLoadingCheckout(false);
     };
 
     useEffect(() => {
-        if (!isLoadingCheckout) {
-            return;
-        }
+        const loadAndResetCheckout = async () => {
+            if (!data.getCheckout()) {
+                if (initialState) {
+                    await hydrateInitialState(initialState);
+                } else {
+                    // If the initial data has not been preloaded from the server, fetch it first.
+                    await fetchDataWithRetry();
+                }
+            }
 
-        if (!initialState) {
-            // If the initial data has not been preloaded from the server, we need to make API calls to fetch it.
-            fetchDataWithRetry()
-                .then(resetCheckoutSession)
-                .then(() => setIsLoadingCheckout(false))
-                .catch((error) => {
-                    throw error;
-                });
-        } else {
-            hydrateInitialState(initialState);
-        }
+            await resetCheckoutSession();
+            setIsLoadingCheckout(false);
+        };
+
+        void loadAndResetCheckout();
     }, []);
 
     return { isLoadingCheckout };
