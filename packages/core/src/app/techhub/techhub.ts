@@ -15,6 +15,8 @@ const TECHHUB_FIELD_LABELS = {
 type TechHubField = keyof typeof TECHHUB_FIELD_LABELS;
 
 let departmentCodesPromise: Promise<string[]> | undefined;
+let departmentCodes: string[] | undefined;
+let didFailToLoadDepartmentCodes = false;
 
 function normalizeLabel(label?: string): string {
     return (label || '').replace(/\s+/g, ' ').trim();
@@ -50,18 +52,35 @@ export function loadTechHubDepartmentCodes(): Promise<string[]> {
 
                 return response.json() as Promise<Array<{ 'Full Department Code'?: string }>>;
             })
-            .then((departments) =>
-                departments
+            .then((departments) => {
+                departmentCodes = departments
                     .map((department) => department['Full Department Code'])
-                    .filter((code): code is string => Boolean(code)),
-            )
+                    .filter((code): code is string => Boolean(code));
+
+                return departmentCodes;
+            })
             .catch((error) => {
                 // A later validation can retry if the initial network request was interrupted.
                 departmentCodesPromise = undefined;
+                didFailToLoadDepartmentCodes = true;
 
                 throw error;
             });
     }
 
     return departmentCodesPromise;
+}
+
+export function isTechHubDepartmentCodeValid(code?: string): boolean {
+    if (!code) {
+        return false;
+    }
+
+    // Formik validates synchronously during checkout startup. Permit the initial pass while
+    // the list is loading, then SingleShippingForm revalidates as soon as it is available.
+    if (!departmentCodes) {
+        return !didFailToLoadDepartmentCodes;
+    }
+
+    return departmentCodes.includes(code);
 }

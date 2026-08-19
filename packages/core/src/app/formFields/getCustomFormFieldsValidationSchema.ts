@@ -15,8 +15,8 @@ import {
 import { DynamicFormFieldType } from '@bigcommerce/checkout/ui';
 
 import {
+    isTechHubDepartmentCodeValid,
     isTechHubField,
-    loadTechHubDepartmentCodes,
     TECHHUB_ALLOWED_CHARACTERS,
 } from '../techhub/techhub';
 
@@ -136,19 +136,7 @@ export default memoize(function getCustomFormFieldsValidationSchema({
                                 .test(
                                     'techhub-department-code',
                                     'Invalid Department Code',
-                                    async (value?: string) => {
-                                        if (!value) {
-                                            return false;
-                                        }
-
-                                        try {
-                                            return (await loadTechHubDepartmentCodes()).includes(
-                                                value,
-                                            );
-                                        } catch {
-                                            return false;
-                                        }
-                                    },
+                                    isTechHubDepartmentCodeValid,
                                 );
                         }
 

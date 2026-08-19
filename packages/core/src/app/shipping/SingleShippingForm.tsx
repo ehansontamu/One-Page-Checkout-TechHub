@@ -25,6 +25,7 @@ import {
     getCustomFormFieldsValidationSchema,
 } from '../formFields';
 import { PaymentMethodId } from '../payment/paymentMethod';
+import { isTechHubField, loadTechHubDepartmentCodes } from '../techhub/techhub';
 
 import BillingSameAsShippingField from './BillingSameAsShippingField';
 import hasSelectedShippingOptions from './hasSelectedShippingOptions';
@@ -85,6 +86,7 @@ const SingleShippingForm: React.FC<
     shippingAddress,
     shippingAutosaveDelay = SHIPPING_AUTOSAVE_DELAY,
     shippingFormRenderTimestamp,
+    validateForm,
     values,
 }) => {
     const {
@@ -108,6 +110,7 @@ const SingleShippingForm: React.FC<
         | DebouncedFunc<(address: Address, includeShippingOptions: boolean) => Promise<void>>
         | undefined
     >(undefined);
+    const hasLoadedDepartmentCodes = useRef(false);
 
     propsRef.current = { values, shippingAddress, isValid };
 
@@ -151,6 +154,25 @@ const SingleShippingForm: React.FC<
             debouncedUpdateAddressRef.current?.cancel();
         };
     }, []);
+
+    useEffect(() => {
+        const fields = getFields(values.shippingAddress?.countryCode);
+        const hasDepartmentCodeField = fields.some((field) =>
+            isTechHubField(field, 'departmentCode'),
+        );
+
+        if (!hasDepartmentCodeField || hasLoadedDepartmentCodes.current) {
+            return;
+        }
+
+        hasLoadedDepartmentCodes.current = true;
+
+        void loadTechHubDepartmentCodes()
+            .catch(() => undefined)
+            .finally(() => {
+                void validateForm();
+            });
+    }, [getFields, validateForm, values.shippingAddress?.countryCode]);
 
     useEffect(() => {
         // Workaround for a bug found during manual testing:
