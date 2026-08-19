@@ -31,6 +31,30 @@ export const useLoadCheckout = (
         ]);
     };
 
+    // A checkout session can retain addresses, the selected shipping option, and order comments
+    // after a shopper leaves the page. TechHub requires a fresh form on every new page load, so
+    // clear that server-side checkout state before the checkout UI is allowed to render.
+    const resetCheckoutSession = async () => {
+        const checkout = data.getCheckout();
+
+        if (!checkout) {
+            return;
+        }
+
+        const consignments = data.getConsignments() || [];
+        const requests = consignments.map(({ id }) => checkoutService.deleteConsignment(id));
+
+        if (data.getBillingAddress()) {
+            requests.push(checkoutService.updateBillingAddress({}));
+        }
+
+        if (checkout.customerMessage) {
+            requests.push(checkoutService.updateCheckout({ customerMessage: '' }));
+        }
+
+        await Promise.all(requests);
+    };
+
     const fetchDataWithRetry = async (maxRetries = 3): Promise<void> => {
         const attemptFetch = async (attemptSequence = 1): Promise<void> => {
             try {
@@ -54,6 +78,7 @@ export const useLoadCheckout = (
     const hydrateInitialState = async (initialState: CheckoutInitialState) => {
         await yieldToMain();
         await checkoutService.hydrateInitialState(initialState);
+        await resetCheckoutSession();
         setIsLoadingCheckout(false);
     };
 
@@ -65,6 +90,7 @@ export const useLoadCheckout = (
         if (!initialState) {
             // If the initial data has not been preloaded from the server, we need to make API calls to fetch it.
             fetchDataWithRetry()
+                .then(resetCheckoutSession)
                 .then(() => setIsLoadingCheckout(false))
                 .catch((error) => {
                     throw error;
