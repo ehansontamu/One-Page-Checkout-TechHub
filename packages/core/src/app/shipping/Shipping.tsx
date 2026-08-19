@@ -1,19 +1,11 @@
-import { type CheckoutSelectors, type CustomerAddress } from '@bigcommerce/checkout-sdk';
+import { type CheckoutSelectors } from '@bigcommerce/checkout-sdk';
 import { noop } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useCapabilities } from '@bigcommerce/checkout/contexts';
 import { TranslatedString } from '@bigcommerce/checkout/locale';
 import { AddressFormSkeleton, ConfirmationModal } from '@bigcommerce/checkout/ui';
 
-import {
-    AddressType,
-    decodeAddressLabel,
-    getShouldSaveAddress,
-    isEqualAddress,
-    mapAddressFromFormValues,
-    setDefaultAddress,
-} from '../address';
+import { getShouldSaveAddress, isEqualAddress, mapAddressFromFormValues } from '../address';
 import type CheckoutStepStatus from '../checkout/CheckoutStepStatus';
 
 import { useShipping } from './hooks/useShipping';
@@ -73,11 +65,6 @@ function Shipping({
         updateShippingAddress,
         updateBillingAddress,
     } = useShipping();
-    const {
-        shipping: { restrictManualAddressEntry },
-        userJourney: { hasCompanyAddressBook, hasAddressLabel },
-    } = useCapabilities();
-    const decode = (address: CustomerAddress) => decodeAddressLabel(address, hasAddressLabel);
 
     useEffect(() => {
         const initializeShipping = async () => {
@@ -87,16 +74,6 @@ function Shipping({
                     loadShippingOptions(),
                     loadBillingAddressFields(),
                 ]);
-
-                if (hasCompanyAddressBook) {
-                    await setDefaultAddress({
-                        type: AddressType.Shipping,
-                        currentAddress: shippingAddress,
-                        addresses: customer.addresses,
-                        decode,
-                        updateAddress: updateShippingAddress,
-                    });
-                }
 
                 if (cartHasPromotionalItems && isMultiShippingMode) {
                     setIsMultiShippingUnavailableModalOpen(true);
@@ -121,16 +98,6 @@ function Shipping({
 
             if (isMultiShippingMode && consignments.length) {
                 await updateShippingAddress(consignments[0].shippingAddress);
-
-                if (hasCompanyAddressBook) {
-                    await setDefaultAddress({
-                        type: AddressType.Shipping,
-                        currentAddress: consignments[0].shippingAddress,
-                        addresses: customer.addresses,
-                        decode,
-                        updateAddress: updateShippingAddress,
-                    });
-                }
             } else {
                 await deleteConsignments();
             }
@@ -146,9 +113,6 @@ function Shipping({
     }, [
         isMultiShippingMode,
         consignments,
-        hasCompanyAddressBook,
-        customer,
-        decode,
         updateShippingAddress,
         deleteConsignments,
         onUnhandledError,
@@ -227,18 +191,6 @@ function Shipping({
                 onUnhandledError={onUnhandledError}
                 step={step}
             />
-        );
-    }
-
-    // Show warning message when restrictManualAddressEntry is true and no addresses are available
-    const hasAddresses = customer?.addresses && customer?.addresses.length > 0;
-    const showWarningMessage = restrictManualAddressEntry && !hasAddresses;
-
-    if (showWarningMessage) {
-        return (
-            <div className="no-addresses-warning optimizedCheckout-contentPrimary body-regular">
-                <TranslatedString id="shipping.no_shipping_addresses_warning" />
-            </div>
         );
     }
 

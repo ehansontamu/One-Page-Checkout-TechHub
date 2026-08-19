@@ -7,7 +7,6 @@ import { TranslatedString } from '@bigcommerce/checkout/locale';
 import { isPayPalFastlaneMethod } from '@bigcommerce/checkout/paypal-fastlane-integration';
 import {
     type AutocompleteItem,
-    CheckboxFormField,
     DynamicFormField,
     DynamicFormFieldType,
     Fieldset,
@@ -39,13 +38,12 @@ const AddressForm: React.FC<AddressFormProps> = ({
     fieldName,
     countryCode,
     onAutocompleteToggle,
-    shouldShowSaveAddress,
     setFieldValue = noop,
     onChange = noop,
     type,
 }) => {
     const {
-        userJourney: { hasCompanyAddressBook, hasAddressLabel },
+        userJourney: { hasAddressLabel },
     } = useCapabilities();
     const { language } = useLocale();
     const {
@@ -249,20 +247,6 @@ const AddressForm: React.FC<AddressFormProps> = ({
                     })}
                 </div>
             </Fieldset>
-            {shouldShowSaveAddress && (
-                <CheckboxFormField
-                    labelContent={
-                        <TranslatedString
-                            id={
-                                hasCompanyAddressBook
-                                    ? 'address.save_to_company_addressbook'
-                                    : 'address.save_in_addressbook'
-                            }
-                        />
-                    }
-                    name={fieldName ? `${fieldName}.shouldSaveAddress` : 'shouldSaveAddress'}
-                />
-            )}
         </>
     );
 };

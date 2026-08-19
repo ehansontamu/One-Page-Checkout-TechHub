@@ -1,16 +1,14 @@
 import { type Address, type FormField, isExtraField } from '@bigcommerce/checkout-sdk/essential';
 import { type FormikProps, setNestedObjectValues, withFormik } from 'formik';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 
 import { useCapabilities, useCheckout } from '@bigcommerce/checkout/contexts';
 import { withLanguage, type WithLanguageProps } from '@bigcommerce/checkout/locale';
-import { usePayPalFastlaneAddress } from '@bigcommerce/checkout/paypal-fastlane-integration';
-import { AddressFormSkeleton, Fieldset, LoadingOverlay } from '@bigcommerce/checkout/ui';
+import { AddressFormSkeleton, Fieldset } from '@bigcommerce/checkout/ui';
 
 import {
     AddressForm,
     type AddressFormValues,
-    AddressSelect,
     AddressType,
     decodeAddressLabel,
     isValidCustomerAddress,
@@ -59,9 +57,9 @@ const PaymentBillingFormComponent = ({
     onUnhandledError,
     updateBillingAddress,
 }: PaymentBillingFormProps & WithLanguageProps & FormikProps<PaymentBillingFormValues>) => {
-    const [isResettingAddress, setIsResettingAddress] = useState(false);
-    const { isPayPalFastlaneEnabled, paypalFastlaneAddresses } = usePayPalFastlaneAddress();
+    const isResettingAddress = false;
     const paymentContext = useContext(PaymentContext);
+    const hasClearedSavedAddress = useRef(false);
 
     const {
         selectedState: { customer, config, cart, isUpdatingBillingAddress },
@@ -72,7 +70,6 @@ const PaymentBillingFormComponent = ({
         isUpdatingBillingAddress: statuses.isUpdatingBillingAddress(),
     }));
     const {
-        billing: { hideSaveToAddressBookCheck, restrictManualAddressEntry },
         shipping: { hideBillingSameAsShippingCheck },
         userJourney: { hasAddressLabel },
     } = useCapabilities();
@@ -81,7 +78,6 @@ const PaymentBillingFormComponent = ({
         throw new Error('checkout data is not available');
     }
 
-    const isGuest = customer.isGuest;
     const shouldRenderStaticAddress = methodId === 'amazonpay';
     const allFormFields = getFields(values.countryCode);
     const customOrExtraFields = allFormFields.filter(
@@ -90,14 +86,12 @@ const PaymentBillingFormComponent = ({
     const hasCustomOrExtraFields = customOrExtraFields.length > 0;
     const editableFormFields =
         shouldRenderStaticAddress && hasCustomOrExtraFields ? customOrExtraFields : allFormFields;
-    const rawBillingAddresses =
-        isGuest && isPayPalFastlaneEnabled ? paypalFastlaneAddresses : customer.addresses;
+    const rawBillingAddresses = customer.addresses;
 
     const billingAddresses = rawBillingAddresses.map((address) =>
         decodeAddressLabel(address, hasAddressLabel),
     );
 
-    const hasAddresses = rawBillingAddresses.length > 0;
     const hasValidCustomerAddress =
         billingAddress &&
         isValidCustomerAddress(
@@ -108,7 +102,6 @@ const PaymentBillingFormComponent = ({
     const { enableOrderComments } = config.checkoutSettings;
     const hasShippableItems = getShippableItemsCount(cart) > 0;
     const shouldShowOrderComments = enableOrderComments && !hasShippableItems;
-    const shouldShowSaveAddress = !hideSaveToAddressBookCheck && !isGuest;
     const shouldShowBillingSameAsShipping =
         !shouldRenderStaticAddress && !hideBillingSameAsShippingCheck && hasShippableItems;
     const isBillingAddressCollapsed =
@@ -170,24 +163,6 @@ const PaymentBillingFormComponent = ({
         };
     }, [paymentContext, ensureBillingAddressSaved]);
 
-    const handleSelectAddress = async (address: Partial<Address>) => {
-        setIsResettingAddress(true);
-
-        try {
-            await updateBillingAddress(address);
-        } catch (error) {
-            if (error instanceof Error) {
-                onUnhandledError(error);
-            }
-        } finally {
-            setIsResettingAddress(false);
-        }
-    };
-
-    const handleUseNewAddress = () => {
-        void handleSelectAddress({});
-    };
-
     const handleAddressFieldChange = useCallback(
         (fieldName: string, value: string | string[]) => {
             if (fieldName === 'countryCode' && typeof value === 'string' && value) {
@@ -202,6 +177,15 @@ const PaymentBillingFormComponent = ({
         },
         [onBillingCountryChange, values],
     );
+
+    useEffect(() => {
+        if (!hasValidCustomerAddress || hasClearedSavedAddress.current) {
+            return;
+        }
+
+        hasClearedSavedAddress.current = true;
+        void updateBillingAddress({});
+    }, [hasValidCustomerAddress, updateBillingAddress]);
 
     return (
         <div className="checkout-billing-form" data-test="checkout-billing-form">
@@ -222,30 +206,14 @@ const PaymentBillingFormComponent = ({
                     )}
 
                     <Fieldset id="checkoutBillingAddress">
-                        {hasAddresses && !shouldRenderStaticAddress && (
-                            <Fieldset id="billingAddresses">
-                                <LoadingOverlay isLoading={isResettingAddress}>
-                                    <AddressSelect
-                                        addresses={billingAddresses}
-                                        onSelectAddress={handleSelectAddress}
-                                        onUseNewAddress={handleUseNewAddress}
-                                        selectedAddress={
-                                            hasValidCustomerAddress ? billingAddress : undefined
-                                        }
-                                        type={AddressType.Billing}
-                                    />
-                                </LoadingOverlay>
-                            </Fieldset>
-                        )}
-
-                        {!restrictManualAddressEntry && !hasValidCustomerAddress && (
+                        {!shouldRenderStaticAddress && (
                             <AddressFormSkeleton isLoading={isResettingAddress}>
                                 <AddressForm
                                     countryCode={values.countryCode}
                                     formFields={editableFormFields}
                                     onChange={handleAddressFieldChange}
                                     setFieldValue={setFieldValue}
-                                    shouldShowSaveAddress={shouldShowSaveAddress}
+                                    shouldShowSaveAddress={false}
                                     type={AddressType.Billing}
                                 />
                             </AddressFormSkeleton>

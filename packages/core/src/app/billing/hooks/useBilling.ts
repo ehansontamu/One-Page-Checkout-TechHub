@@ -3,12 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useCapabilities, useCheckout } from '@bigcommerce/checkout/contexts';
 
-import {
-    AddressType,
-    decodeAddressLabel,
-    encodeAddressForWrite,
-    setDefaultAddress,
-} from '../../address';
+import { decodeAddressLabel, encodeAddressForWrite } from '../../address';
 import getBillingMethodId from '../getBillingMethodId';
 
 const getFieldsWithExtraFields = (
@@ -57,8 +52,7 @@ export const useBilling = ({ onReady, onUnhandledError }: UseBillingOptions) => 
         getAddressExtraFields: data.getAddressExtraFields,
     }));
     const {
-        userJourney: { hasAddressExtraFields, hasAddressLabel, hasCompanyAddressBook },
-        billing: { restrictManualAddressEntry },
+        userJourney: { hasAddressExtraFields, hasAddressLabel },
     } = useCapabilities();
     // Write boundary for the address label: folds the label into `company` (and drops the
     // client-only `label`) just before the request leaves the app. Idempotent and a no-op unless the
@@ -83,8 +77,7 @@ export const useBilling = ({ onReady, onUnhandledError }: UseBillingOptions) => 
     const billingAddress = decodeAddressLabel(getBillingAddress(), hasAddressLabel);
     const methodId = getBillingMethodId(checkout);
 
-    const hasAddresses = Boolean(customer.addresses && customer.addresses.length > 0);
-    const showNoAddressesWarning = restrictManualAddressEntry && !hasAddresses;
+    const showNoAddressesWarning = false;
 
     const getFields = useCallback(
         (countryCode?: string) =>
@@ -101,16 +94,6 @@ export const useBilling = ({ onReady, onUnhandledError }: UseBillingOptions) => 
         const init = async () => {
             try {
                 await checkoutService.loadBillingAddressFields();
-
-                if (hasCompanyAddressBook) {
-                    await setDefaultAddress({
-                        type: AddressType.Billing,
-                        currentAddress: getBillingAddress(),
-                        addresses: customer.addresses,
-                        decode: (address) => decodeAddressLabel(address, hasAddressLabel),
-                        updateAddress: updateBillingAddress,
-                    });
-                }
 
                 onReady?.();
             } catch (error) {

@@ -9,12 +9,13 @@ import { encodeAddressForWrite } from './addressLabelUtils';
 import { type AddressFormValues } from './mapAddressToFormValues';
 
 export default function mapAddressFromFormValues(formValues: AddressFormValues): Address {
-    const { customFields, extraFields, shouldSaveAddress, label, ...address } = formValues;
+    const { customFields, extraFields, label, ...address } = formValues;
 
     return encodeAddressForWrite({
         ...address,
         label,
-        shouldSaveAddress,
+        // TechHub checkout deliberately does not save customer addresses.
+        shouldSaveAddress: false,
         customFields: mapCustomFormFieldsFromFormValues(customFields),
         // Only carries extra-field values when the form collected them, which only
         // happens when the `hasAddressExtraFields` capability renders the inputs.

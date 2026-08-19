@@ -1,6 +1,6 @@
 import { type Address, type FormField, isExtraField } from '@bigcommerce/checkout-sdk/essential';
 import { type FormikProps, withFormik } from 'formik';
-import React, { type RefObject, useRef, useState } from 'react';
+import React, { type RefObject, useEffect, useRef } from 'react';
 
 import { useCapabilities, useCheckout } from '@bigcommerce/checkout/contexts';
 import {
@@ -8,23 +8,15 @@ import {
     withLanguage,
     type WithLanguageProps,
 } from '@bigcommerce/checkout/locale';
-import { usePayPalFastlaneAddress } from '@bigcommerce/checkout/paypal-fastlane-integration';
 import {
     AddressFormSkeleton,
     Button,
     ButtonVariant,
     Fieldset,
     Form,
-    LoadingOverlay,
 } from '@bigcommerce/checkout/ui';
 
-import {
-    AddressForm,
-    AddressSelect,
-    AddressType,
-    decodeAddressLabel,
-    isValidCustomerAddress,
-} from '../address';
+import { AddressForm, AddressType, decodeAddressLabel, isValidCustomerAddress } from '../address';
 import { OrderComments } from '../orderComments';
 import { getShippableItemsCount } from '../shipping';
 
@@ -57,9 +49,8 @@ const BillingForm = ({
     onUnhandledError,
     updateBillingAddress,
 }: BillingFormProps & WithLanguageProps & FormikProps<BillingFormValues>) => {
-    const [isResettingAddress, setIsResettingAddress] = useState(false);
+    const isResettingAddress = false;
     const addressFormRef: RefObject<HTMLFieldSetElement> = useRef(null);
-    const { isPayPalFastlaneEnabled, paypalFastlaneAddresses } = usePayPalFastlaneAddress();
 
     const {
         selectedState: { customer, config, cart, isUpdatingBillingAddress, isUpdatingCheckout },
@@ -71,7 +62,6 @@ const BillingForm = ({
         isUpdatingCheckout: statuses.isUpdatingCheckout(),
     }));
     const {
-        billing: { hideSaveToAddressBookCheck, restrictManualAddressEntry },
         userJourney: { hasAddressLabel },
     } = useCapabilities();
 
@@ -79,7 +69,6 @@ const BillingForm = ({
         throw new Error('checkout data is not available');
     }
 
-    const isGuest = customer.isGuest;
     const rawAddresses = customer.addresses;
     const shouldRenderStaticAddress = methodId === 'amazonpay';
     const allFormFields = getFields(values.countryCode);
@@ -89,14 +78,12 @@ const BillingForm = ({
     const hasCustomOrExtraFields = customOrExtraFields.length > 0;
     const editableFormFields =
         shouldRenderStaticAddress && hasCustomOrExtraFields ? customOrExtraFields : allFormFields;
-    const rawBillingAddresses =
-        isGuest && isPayPalFastlaneEnabled ? paypalFastlaneAddresses : rawAddresses;
+    const rawBillingAddresses = rawAddresses;
 
     const billingAddresses = rawBillingAddresses.map((address) =>
         decodeAddressLabel(address, hasAddressLabel),
     );
 
-    const hasAddresses = rawBillingAddresses.length > 0;
     const hasValidCustomerAddress =
         billingAddress &&
         isValidCustomerAddress(
@@ -107,25 +94,20 @@ const BillingForm = ({
     const isUpdating = isUpdatingBillingAddress || isUpdatingCheckout;
     const { enableOrderComments } = config.checkoutSettings;
     const shouldShowOrderComments = enableOrderComments && getShippableItemsCount(cart) < 1;
-    const shouldShowSaveAddress = !hideSaveToAddressBookCheck && !isGuest;
+    const hasClearedSavedAddress = useRef(false);
 
-    const handleSelectAddress = async (address: Partial<Address>) => {
-        setIsResettingAddress(true);
+    useEffect(() => {
+        if (!hasValidCustomerAddress || hasClearedSavedAddress.current) {
+            return;
+        }
 
-        try {
-            await updateBillingAddress(address);
-        } catch (error) {
+        hasClearedSavedAddress.current = true;
+        void updateBillingAddress({}).catch((error: unknown) => {
             if (error instanceof Error) {
                 onUnhandledError(error);
             }
-        } finally {
-            setIsResettingAddress(false);
-        }
-    };
-
-    const handleUseNewAddress = () => {
-        void handleSelectAddress({});
-    };
+        });
+    }, [hasValidCustomerAddress, onUnhandledError, updateBillingAddress]);
 
     return (
         <Form autoComplete="on">
@@ -136,29 +118,13 @@ const BillingForm = ({
             )}
 
             <Fieldset id="checkoutBillingAddress" ref={addressFormRef}>
-                {hasAddresses && !shouldRenderStaticAddress && (
-                    <Fieldset id="billingAddresses">
-                        <LoadingOverlay isLoading={isResettingAddress}>
-                            <AddressSelect
-                                addresses={billingAddresses}
-                                onSelectAddress={handleSelectAddress}
-                                onUseNewAddress={handleUseNewAddress}
-                                selectedAddress={
-                                    hasValidCustomerAddress ? billingAddress : undefined
-                                }
-                                type={AddressType.Billing}
-                            />
-                        </LoadingOverlay>
-                    </Fieldset>
-                )}
-
-                {!restrictManualAddressEntry && !hasValidCustomerAddress && (
+                {!shouldRenderStaticAddress && (
                     <AddressFormSkeleton isLoading={isResettingAddress}>
                         <AddressForm
                             countryCode={values.countryCode}
                             formFields={editableFormFields}
                             setFieldValue={setFieldValue}
-                            shouldShowSaveAddress={shouldShowSaveAddress}
+                            shouldShowSaveAddress={false}
                             type={AddressType.Billing}
                         />
                     </AddressFormSkeleton>

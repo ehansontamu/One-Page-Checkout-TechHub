@@ -1,12 +1,11 @@
 import { type Address, type Consignment, type FormField } from '@bigcommerce/checkout-sdk';
-import React, { type ReactElement } from 'react';
+import React, { type ReactElement, useEffect, useRef } from 'react';
 
 import { useCapabilities, useCheckout, useThemeContext } from '@bigcommerce/checkout/contexts';
 import { Fieldset, LoadingOverlay } from '@bigcommerce/checkout/ui';
 
 import {
     AddressForm,
-    AddressSelect,
     AddressType,
     decodeAddressLabel,
     isValidCustomerAddress,
@@ -31,7 +30,6 @@ const addressFieldName = 'shippingAddress';
 
 const ShippingAddressForm = ({
     address: shippingAddress,
-    onAddressSelect,
     onUseNewAddress,
     formFields,
     isLoading,
@@ -47,14 +45,13 @@ const ShippingAddressForm = ({
     } = useCheckout(({ data }) => ({ customer: data.getCustomer() }));
     const { enhancedThemeV1 } = useThemeContext();
     const {
-        shipping: { hideSaveToAddressBookCheck, restrictManualAddressEntry },
         userJourney: { hasAddressLabel },
     } = useCapabilities();
 
     const rawAddresses = customer?.addresses || [];
     const addresses = rawAddresses.map((address) => decodeAddressLabel(address, hasAddressLabel));
     const decodedShippingAddress = decodeAddressLabel(shippingAddress, hasAddressLabel);
-    const shouldShowSaveAddress = !hideSaveToAddressBookCheck && !customer?.isGuest;
+    const hasClearedSavedAddress = useRef(false);
 
     const setFieldValue = (fieldName: string, fieldValue: string) => {
         const customFormFieldNames = formFields
@@ -84,48 +81,38 @@ const ShippingAddressForm = ({
         }
     };
 
-    const hasAddresses = rawAddresses.length > 0;
-    const hasValidCustomerAddress = isValidCustomerAddress(
+    const hasSavedAddressSelected = isValidCustomerAddress(
         decodedShippingAddress,
         addresses,
         formFields,
         validateMaxLength,
     );
 
+    useEffect(() => {
+        if (!hasSavedAddressSelected || hasClearedSavedAddress.current) {
+            return;
+        }
+
+        hasClearedSavedAddress.current = true;
+        onUseNewAddress();
+    }, [hasSavedAddressSelected, onUseNewAddress]);
+
     const sortedFormFields = enhancedThemeV1 ? reorderAddressFormFields(formFields) : formFields;
 
     return (
         <Fieldset id="checkoutShippingAddress">
-            {hasAddresses && (
-                <Fieldset id="shippingAddresses">
-                    <LoadingOverlay isLoading={isLoading}>
-                        <AddressSelect
-                            addresses={addresses}
-                            onSelectAddress={onAddressSelect}
-                            onUseNewAddress={onUseNewAddress}
-                            selectedAddress={
-                                hasValidCustomerAddress ? decodedShippingAddress : undefined
-                            }
-                            type={AddressType.Shipping}
-                        />
-                    </LoadingOverlay>
-                </Fieldset>
-            )}
-
-            {!restrictManualAddressEntry && !hasValidCustomerAddress && (
-                <LoadingOverlay isLoading={isLoading} unmountContentWhenLoading>
-                    <AddressForm
-                        countryCode={formAddress && formAddress.countryCode}
-                        fieldName={addressFieldName}
-                        formFields={sortedFormFields}
-                        onAutocompleteToggle={handleAutocompleteToggle}
-                        onChange={handleChange}
-                        setFieldValue={setFieldValue}
-                        shouldShowSaveAddress={shouldShowSaveAddress}
-                        type={AddressType.Shipping}
-                    />
-                </LoadingOverlay>
-            )}
+            <LoadingOverlay isLoading={isLoading} unmountContentWhenLoading>
+                <AddressForm
+                    countryCode={formAddress && formAddress.countryCode}
+                    fieldName={addressFieldName}
+                    formFields={sortedFormFields}
+                    onAutocompleteToggle={handleAutocompleteToggle}
+                    onChange={handleChange}
+                    setFieldValue={setFieldValue}
+                    shouldShowSaveAddress={false}
+                    type={AddressType.Shipping}
+                />
+            </LoadingOverlay>
         </Fieldset>
     );
 };
