@@ -16,6 +16,7 @@ import { isExperimentEnabled } from '@bigcommerce/checkout/utility';
 
 import { EMPTY_ARRAY, isFloatingLabelEnabled } from '../common/utility';
 import getProviderWithCustomCheckout from '../payment/getProviderWithCustomCheckout';
+import { shouldHideTechHubAddressField } from '../techhub/techhub';
 
 import {
     type AddressFormProps,
@@ -165,7 +166,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
             <Fieldset>
                 <div className="checkout-address" ref={containerRef}>
                     {formFields.map((field) => {
-                        if (field.hidden) return null;
+                        if (field.hidden || shouldHideTechHubAddressField(field.name)) return null;
 
                         const addressFieldName = field.name;
                         const translatedPlaceholderId = PLACEHOLDER[addressFieldName];

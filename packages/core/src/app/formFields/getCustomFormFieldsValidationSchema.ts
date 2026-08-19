@@ -14,6 +14,12 @@ import {
 
 import { DynamicFormFieldType } from '@bigcommerce/checkout/ui';
 
+import {
+    isTechHubField,
+    loadTechHubDepartmentCodes,
+    TECHHUB_ALLOWED_CHARACTERS,
+} from '../techhub/techhub';
+
 export type TranslateValidationErrorFunction = (
     validationType: 'max' | 'min' | 'required' | 'invalid',
     field: {
@@ -99,6 +105,51 @@ export default memoize(function getCustomFormFieldsValidationSchema({
                                     : (schema[name] as ArraySchema<string>).required(
                                           requiredErrorMessage,
                                       );
+                        }
+
+                        if (isTechHubField({ label }, 'recipientUin')) {
+                            schema[name] = string()
+                                .trim()
+                                .required('Recipient UIN(s) or Name(s) cannot be blank')
+                                .matches(
+                                    TECHHUB_ALLOWED_CHARACTERS,
+                                    'Recipient UIN(s) or Name(s) contains invalid characters',
+                                );
+                        }
+
+                        if (isTechHubField({ label }, 'accountNumber')) {
+                            schema[name] = string().matches(
+                                TECHHUB_ALLOWED_CHARACTERS,
+                                'Recipient Account Number(s) contains invalid characters',
+                            );
+                        }
+
+                        if (isTechHubField({ label }, 'collegeUnit')) {
+                            schema[name] = string()
+                                .trim()
+                                .required("Please select a Recipient's College/Unit");
+                        }
+
+                        if (isTechHubField({ label }, 'departmentCode')) {
+                            schema[name] = string()
+                                .trim()
+                                .test(
+                                    'techhub-department-code',
+                                    'Invalid Department Code',
+                                    async (value?: string) => {
+                                        if (!value) {
+                                            return false;
+                                        }
+
+                                        try {
+                                            return (await loadTechHubDepartmentCodes()).includes(
+                                                value,
+                                            );
+                                        } catch {
+                                            return false;
+                                        }
+                                    },
+                                );
                         }
 
                         return schema;

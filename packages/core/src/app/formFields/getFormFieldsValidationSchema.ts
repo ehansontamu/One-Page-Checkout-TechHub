@@ -2,6 +2,8 @@ import { isExtraField } from '@bigcommerce/checkout-sdk/essential';
 import { memoize } from '@bigcommerce/memoize';
 import { object, type ObjectSchema, string, type StringSchema } from 'yup';
 
+import { isTechHubRestrictedAddressField, TECHHUB_ALLOWED_CHARACTERS } from '../techhub/techhub';
+
 import getCustomFormFieldsValidationSchema, {
     type FormFieldsValidationSchemaOptions,
 } from './getCustomFormFieldsValidationSchema';
@@ -44,7 +46,9 @@ export default memoize(function getFormFieldsValidationSchema({
                     }
 
                     schema[name] = schema[name].matches(
-                        WHITELIST_REGEXP,
+                        isTechHubRestrictedAddressField(name)
+                            ? TECHHUB_ALLOWED_CHARACTERS
+                            : WHITELIST_REGEXP,
                         translate('invalid', { name, label }),
                     );
 

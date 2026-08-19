@@ -86,16 +86,15 @@ interface TermsConditionsCheckboxFieldProps {
 
 const TermsConditionsCheckboxField: FunctionComponent<TermsConditionsCheckboxFieldProps> = ({
     name,
-    url,
 }) => {
     const labelContent = useMemo(
-        () =>
-            url ? (
-                <TranslatedHtml data={{ url }} id="terms_and_conditions.agreement_with_link_text" />
-            ) : (
-                <TranslatedString id="terms_and_conditions.agreement_text" />
-            ),
-        [url],
+        () => (
+            <TranslatedHtml
+                data={{ url: '/terms-and-conditions/' }}
+                id="terms_and_conditions.agreement_with_link_text"
+            />
+        ),
+        [],
     );
 
     return <CheckboxFormField labelContent={labelContent} name={name} />;

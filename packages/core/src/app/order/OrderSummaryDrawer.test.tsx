@@ -121,7 +121,7 @@ describe('OrderSummaryDrawer', () => {
 
             await userEvent.click(screen.getByTestId('cart-item-image'));
 
-            expect(screen.getByText('Order Summary')).toBeInTheDocument();
+        expect(screen.getByText('THIS IS A TEST')).toBeInTheDocument();
 
             const couponsInOrderSummary = screen.getAllByTestId('cart-coupon');
 
@@ -158,7 +158,7 @@ describe('OrderSummaryDrawer', () => {
             await userEvent.keyboard('{tab}');
             await userEvent.keyboard('{enter}');
 
-            expect(screen.getByText('Order Summary')).toBeInTheDocument();
+            expect(screen.getByText('THIS IS A TEST')).toBeInTheDocument();
 
             const couponsInOrderSummary = screen.getAllByTestId('cart-coupon');
 

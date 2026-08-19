@@ -62,7 +62,7 @@
         "cart": {
             "billed_amount_text": "*You will be charged and invoiced {total} ({code}) for this order.",
             "based_on_currency_text": "Based on {total} {code}",
-            "cart_heading": "Order Summary",
+            "cart_heading": "THIS IS A TEST",
             "digital_item_text": "Digital Item",
             "discount_text": "Discount",
             "downloads_action": "Go to Downloads",
@@ -556,7 +556,7 @@
             "save_shipping_option_error": "An error occurred while saving the shipping quote to your order. Please try again.",
             "select_shipping_address_text": "Please select a shipping address in order to see shipping quotes",
             "no_shipping_addresses_warning": "Sorry, you have no shipping address to choose from, please go to your address book to create an address or contact your site admin.",
-            "shipping_address_heading": "Shipping address",
+            "shipping_address_heading": "Shipping and Billing Info",
             "multishipping_consignment_index_heading": "Destination #{consignmentNumber}",
             "multishipping_incomplete_consignment_error": "Please complete the address, item allocation, and method selection for Destination #{consignmentNumber}.",
             "multishipping_add_new_destination": "Add new destination",
@@ -592,7 +592,7 @@
             "ship_to_single": "Ship to a single address",
             "ship_to_single_action": "Ship to a Single Address instead",
             "ship_to_single_message": "If you proceed, all progress for multiple addresses will be lost. This action cannot be undone.",
-            "shipping_heading": "Shipping",
+            "shipping_heading": "Details",
             "shipping_method_label": "Shipping Method",
             "shipping_option_expired_error": "The shipping price you were quoted is no longer valid. Click OK to see the most up-to-date shipping prices.",
             "shipping_option_expired_heading": "Your shipping price has been updated",
@@ -630,8 +630,8 @@
         },
         "terms_and_conditions": {
             "agreement_required_error": "Please agree to the terms and conditions",
-            "agreement_text": "Yes, I agree with the above terms and conditions.",
-            "agreement_with_link_text": "Yes, I agree with the <a href=\"{url}\" target=\"_blank\">terms and conditions</a>.",
+            "agreement_text": "I confirm that I have authorization for this purchase, and I agree with the TechHub terms and conditions.",
+            "agreement_with_link_text": "I confirm that I have authorization for this purchase, and I agree with the TechHub <a href=\"{url}\" target=\"_blank\">terms and conditions</a>.",
             "terms_and_conditions_heading": "Terms and Conditions"
         },
         "order_confirmation": {

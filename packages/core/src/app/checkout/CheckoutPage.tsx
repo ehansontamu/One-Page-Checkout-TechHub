@@ -48,6 +48,7 @@ import { SubscribeSessionStorage } from '../customer/SubscribeSessionStorage';
 import { type EmbeddedCheckoutStylesheet, isEmbedded } from '../embeddedCheckout';
 import { hasSelectedShippingOptions, isUsingMultiShipping } from '../shipping';
 import { ShippingOptionExpiredError } from '../shipping/shippingOption';
+import { isTechHubGuestCustomer } from '../techhub/techhub';
 
 import type CheckoutStepStatus from './CheckoutStepStatus';
 import CheckoutStepType from './CheckoutStepType';
@@ -593,6 +594,12 @@ const Checkout = ({
 
         const init = async () => {
             try {
+                if (isTechHubGuestCustomer(data.getCustomer())) {
+                    window.location.assign(cartUrl);
+
+                    return;
+                }
+
                 const providers = data.getConfig()?.checkoutSettings?.remoteCheckoutProviders || [];
 
                 const supportedProviders = getSupportedMethodIds(providers);
