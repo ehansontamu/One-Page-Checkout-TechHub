@@ -1,6 +1,8 @@
-import { ExtensionMessageType, ExtensionQueryType } from '@bigcommerce/checkout-sdk/essential';
+import { ExtensionQueryType } from '@bigcommerce/checkout-sdk/essential';
 
 import { type QueryHandler, type QueryHandlerProps } from './QueryHandler';
+
+const GET_CONSIGNMENTS_MESSAGE_TYPE = 'EXTENSION:GET_CONSIGNMENTS';
 
 export function createGetConsignmentHandler({
     checkoutService,
@@ -16,7 +18,7 @@ export function createGetConsignmentHandler({
             const consignments = checkoutService.getState().data.getCheckout()?.consignments || [];
 
             checkoutService.postMessageToExtension(extension.id, {
-                type: ExtensionMessageType.GetConsignments,
+                type: GET_CONSIGNMENTS_MESSAGE_TYPE,
                 payload: {
                     consignments,
                 },

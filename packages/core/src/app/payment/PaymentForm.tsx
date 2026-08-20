@@ -1,6 +1,5 @@
 import {
     type Capabilities,
-    ExtensionRegion,
     type FormField,
     type PaymentMethod,
 } from '@bigcommerce/checkout-sdk/essential';
@@ -17,7 +16,7 @@ import React, {
 } from 'react';
 import { object, type ObjectSchema, string } from 'yup';
 
-import { Extension } from '@bigcommerce/checkout/checkout-extension';
+import { Extension, ExtensionRegion } from '@bigcommerce/checkout/checkout-extension';
 import { useCapabilities, useCheckout, useThemeContext } from '@bigcommerce/checkout/contexts';
 import {
     TranslatedString,

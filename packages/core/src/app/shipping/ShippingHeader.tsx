@@ -1,8 +1,7 @@
-import { ExtensionRegion } from '@bigcommerce/checkout-sdk/essential';
 import classNames from 'classnames';
 import React, { type FunctionComponent, memo, useEffect, useMemo, useState } from 'react';
 
-import { Extension } from '@bigcommerce/checkout/checkout-extension';
+import { Extension, ExtensionRegion } from '@bigcommerce/checkout/checkout-extension';
 import { useSetCheckoutStepHeaderAction, useThemeContext } from '@bigcommerce/checkout/contexts';
 import { preventDefault } from '@bigcommerce/checkout/dom-utils';
 import { TranslatedString } from '@bigcommerce/checkout/locale';

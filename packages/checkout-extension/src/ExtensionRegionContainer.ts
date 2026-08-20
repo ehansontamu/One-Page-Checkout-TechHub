@@ -1,4 +1,6 @@
-import { ExtensionRegion } from '@bigcommerce/checkout-sdk/essential';
+import type { ExtensionRegion as CheckoutSdkExtensionRegion } from '@bigcommerce/checkout-sdk/essential';
+
+import { ExtensionRegion } from './ExtensionRegion';
 
 export enum ExtensionRegionContainer {
     ShippingShippingAddressFormBefore = 'extension-region-shipping-shippingaddressform-before',
@@ -9,17 +11,19 @@ export enum ExtensionRegionContainer {
     SummaryLastItemAfter = 'extension-region-summary-lastitem-after',
 }
 
-export const extensionRegionToContainerMap: Record<ExtensionRegion, ExtensionRegionContainer | ''> =
-    {
-        [ExtensionRegion.ShippingShippingAddressFormBefore]:
-            ExtensionRegionContainer.ShippingShippingAddressFormBefore,
-        [ExtensionRegion.ShippingShippingAddressFormAfter]:
-            ExtensionRegionContainer.ShippingShippingAddressFormAfter,
-        [ExtensionRegion.ShippingSelectedShippingMethod]:
-            ExtensionRegionContainer.ShippingSelectedShippingMethod,
-        [ExtensionRegion.PaymentPaymentMethodListBefore]:
-            ExtensionRegionContainer.PaymentPaymentMethodListBefore,
-        [ExtensionRegion.SummaryAfter]: ExtensionRegionContainer.SummaryAfter,
-        [ExtensionRegion.SummaryLastItemAfter]: ExtensionRegionContainer.SummaryLastItemAfter,
-        [ExtensionRegion.GlobalWebWorker]: '',
-    };
+export const extensionRegionToContainerMap: Record<
+    CheckoutSdkExtensionRegion,
+    ExtensionRegionContainer | ''
+> = {
+    [ExtensionRegion.ShippingShippingAddressFormBefore]:
+        ExtensionRegionContainer.ShippingShippingAddressFormBefore,
+    [ExtensionRegion.ShippingShippingAddressFormAfter]:
+        ExtensionRegionContainer.ShippingShippingAddressFormAfter,
+    [ExtensionRegion.ShippingSelectedShippingMethod]:
+        ExtensionRegionContainer.ShippingSelectedShippingMethod,
+    [ExtensionRegion.PaymentPaymentMethodListBefore]:
+        ExtensionRegionContainer.PaymentPaymentMethodListBefore,
+    [ExtensionRegion.SummaryAfter]: ExtensionRegionContainer.SummaryAfter,
+    [ExtensionRegion.SummaryLastItemAfter]: ExtensionRegionContainer.SummaryLastItemAfter,
+    [ExtensionRegion.GlobalWebWorker]: '',
+};

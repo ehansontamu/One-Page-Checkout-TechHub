@@ -1,4 +1,6 @@
-import { type Extension, ExtensionRegion, ExtensionType } from '@bigcommerce/checkout-sdk';
+import { type Extension } from '@bigcommerce/checkout-sdk';
+
+import { ExtensionRegion } from './ExtensionRegion';
 
 export function getExtensions(): Extension[] {
     return [
@@ -7,14 +9,14 @@ export function getExtensions(): Extension[] {
             name: 'Foo',
             region: ExtensionRegion.ShippingShippingAddressFormBefore,
             url: 'https://widget.foo.com/',
-            type: ExtensionType.Iframe,
+            type: 'iframe',
         },
         {
             id: '456',
             name: 'Bar',
             region: ExtensionRegion.ShippingShippingAddressFormAfter,
             url: 'https://widget.bar.com/',
-            type: ExtensionType.Iframe,
+            type: 'iframe',
         },
     ];
 }

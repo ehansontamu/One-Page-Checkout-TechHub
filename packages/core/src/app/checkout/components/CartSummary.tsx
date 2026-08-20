@@ -1,7 +1,6 @@
-import { ExtensionRegion } from '@bigcommerce/checkout-sdk/essential';
 import React, { lazy } from 'react';
 
-import { Extension } from '@bigcommerce/checkout/checkout-extension';
+import { Extension, ExtensionRegion } from '@bigcommerce/checkout/checkout-extension';
 import { useThemeContext } from '@bigcommerce/checkout/contexts';
 import { CartSummarySkeleton, LazyContainer, MobileView } from '@bigcommerce/checkout/ui';
 

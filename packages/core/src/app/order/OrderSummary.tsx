@@ -1,12 +1,11 @@
 import {
-    ExtensionRegion,
     type LineItemMap,
     type ShopperCurrency,
     type StoreCurrency,
 } from '@bigcommerce/checkout-sdk/essential';
 import React, { type FunctionComponent, type ReactNode } from 'react';
 
-import { Extension } from '@bigcommerce/checkout/checkout-extension';
+import { Extension, ExtensionRegion } from '@bigcommerce/checkout/checkout-extension';
 import { useCheckout, useLocale, useThemeContext } from '@bigcommerce/checkout/contexts';
 import { TranslatedHtml, TranslatedString } from '@bigcommerce/checkout/locale';
 
