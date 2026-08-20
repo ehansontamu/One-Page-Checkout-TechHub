@@ -13,7 +13,7 @@ This repository is a fork of `bigcommerce/checkout-js`. This document is the dur
 
 ### Checkout presentation and navigation
 
-- The cart heading reads `THIS IS A TEST` in the current local/test build.
+- The cart heading reads `Order Summary`.
 - The shipping section is labeled `Details`; its address heading is `Shipping and Billing Info`.
 - Company and phone address fields are hidden.
 - Customers in customer group `10` are redirected to the cart.
@@ -50,3 +50,4 @@ This repository is a fork of `bigcommerce/checkout-js`. This document is the dur
 | 2026-08-20 | Made billing permanently match shipping and added the department-code lookup control. | `AddressForm.tsx`, `CheckoutPage.tsx`, shipping forms, payment billing form | The Department Lookup Tool must remain available at the hardcoded production WebDAV URL. |
 | 2026-08-20 | Restored the normal Order Summary heading and added a per-visit Details confirmation gate. | `en.json`, `CheckoutPage.tsx` | None. |
 | 2026-08-20 | Enabled transpile-only handling in the production Webpack build so the deployable checkout bundle can be generated despite upstream declaration-file loading errors. | `webpack.config.js` | Run focused tests separately; `npm run build` now produces the WebDAV upload in `dist/`. |
+| 2026-08-20 | Merged upstream `bigcommerce/checkout-js` `1.872.0` while preserving TechHub’s fixed-billing and per-visit Details-confirmation policies. | Upstream checkout, payment, customer, order-summary, dependency, and generated distribution files; TechHub `CheckoutPage.tsx` conflict resolution | Revalidate the custom checkout against both stores after each future upstream merge. |
