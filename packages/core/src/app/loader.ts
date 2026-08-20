@@ -61,7 +61,9 @@ export function loadFiles(options?: LoadFilesOptions): Promise<LoadFilesResult> 
     const stylesheets = Promise.all(
         css.map((path) =>
             getStylesheetLoader().loadStylesheet(joinPaths(publicPath, path), {
-                prepend: true,
+                // Load after the store theme so checkout layout rules can override theme-level
+                // selectors that target the shared checkout header markup.
+                prepend: false,
                 attributes: integrity[path]
                     ? {
                           crossorigin: 'anonymous',

@@ -42,6 +42,7 @@ This repository is a fork of `bigcommerce/checkout-js`. This document is the dur
 - Before upgrading from upstream, compare this document and reapply each item deliberately rather than blindly copying files.
 - Add the date, purpose, affected source files, and any store-configuration dependency for every new customization.
 - The production build uses transpile-only TypeScript handling. SDK `declare const enum` values are not present at runtime, so checkout extension regions and messages must use the local runtime-safe constants in `packages/checkout-extension/src/`.
+- Production checkout styles load after the store theme styles. This preserves the checkout header’s centered inner container when the theme targets `.checkoutHeader-content`.
 
 ## Change log
 
@@ -53,3 +54,4 @@ This repository is a fork of `bigcommerce/checkout-js`. This document is the dur
 | 2026-08-20 | Enabled transpile-only handling in the production Webpack build so the deployable checkout bundle can be generated despite upstream declaration-file loading errors. | `webpack.config.js` | Run focused tests separately; `npm run build` now produces the WebDAV upload in `dist/`. |
 | 2026-08-20 | Merged upstream `bigcommerce/checkout-js` `1.872.0` while preserving TechHub’s fixed-billing and per-visit Details-confirmation policies. | Upstream checkout, payment, customer, order-summary, dependency, and generated distribution files; TechHub `CheckoutPage.tsx` conflict resolution | Revalidate the custom checkout against both stores after each future upstream merge. |
 | 2026-08-20 | Fixed the upstream SDK extension-region runtime error after the `1.872.0` merge. | Checkout extension runtime constants and extension insertion points | Required because transpile-only builds do not emit SDK `declare const enum` values. |
+| 2026-08-20 | Made production checkout styles load after theme styles to prevent the theme’s `.checkoutHeader-content` rule from overriding the checkout header layout. | `loader.ts` | Theme CSS may target shared checkout markup; verify header alignment after future loader changes. |
