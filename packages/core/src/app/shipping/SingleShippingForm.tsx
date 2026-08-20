@@ -4,7 +4,6 @@ import { debounce, type DebouncedFunc, isEqual, noop } from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { lazy, object } from 'yup';
 
-import { useCapabilities, useThemeContext } from '@bigcommerce/checkout/contexts';
 import { withLanguage, type WithLanguageProps } from '@bigcommerce/checkout/locale';
 import { Fieldset, Form } from '@bigcommerce/checkout/ui';
 
@@ -27,7 +26,6 @@ import {
 import { PaymentMethodId } from '../payment/paymentMethod';
 import { isTechHubField, loadTechHubDepartmentCodes } from '../techhub/techhub';
 
-import BillingSameAsShippingField from './BillingSameAsShippingField';
 import hasSelectedShippingOptions from './hasSelectedShippingOptions';
 import { useShipping } from './hooks/useShipping';
 import isSelectedShippingOptionValid from './isSelectedShippingOptionValid';
@@ -67,8 +65,6 @@ function shouldHaveCustomValidation(methodId?: string): boolean {
 
 export const SHIPPING_AUTOSAVE_DELAY = 1700;
 
-const PAYMENT_METHOD_VALID = ['amazonpay'];
-
 const SingleShippingForm: React.FC<
     SingleShippingFormProps & WithLanguageProps & FormikProps<SingleShippingFormValues>
 > = ({
@@ -89,10 +85,6 @@ const SingleShippingForm: React.FC<
     validateForm,
     values,
 }) => {
-    const {
-        shipping: { hideBillingSameAsShippingCheck },
-    } = useCapabilities();
-    const { enhancedThemeV1 } = useThemeContext();
     const {
         consignments,
         deinitializeShippingMethod: deinitialize,
@@ -309,11 +301,6 @@ const SingleShippingForm: React.FC<
         );
     };
 
-    const shouldShowBillingSameAsShipping =
-        !hideBillingSameAsShippingCheck &&
-        !enhancedThemeV1 &&
-        !PAYMENT_METHOD_VALID.some((method) => method === methodId);
-
     return (
         <Form autoComplete="on">
             <Fieldset>
@@ -332,11 +319,6 @@ const SingleShippingForm: React.FC<
                     onUseNewAddress={handleUseNewAddress}
                     shippingAddress={shippingAddress}
                 />
-                {shouldShowBillingSameAsShipping && (
-                    <div className="form-body">
-                        <BillingSameAsShippingField />
-                    </div>
-                )}
             </Fieldset>
 
             <ShippingFormFooter

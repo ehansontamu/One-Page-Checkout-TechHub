@@ -425,25 +425,14 @@ const Checkout = ({
         ],
     );
 
-    const handleShippingNextStep = useCallback(
-        (isBillingSameAsShipping: boolean): void => {
-            setState((prev) => ({ ...prev, isBillingSameAsShipping }));
+    const handleShippingNextStep = useCallback((): void => {
+        setState((prev) => ({ ...prev, isBillingSameAsShipping: true }));
+        navigateToNextIncompleteStep();
+    }, [navigateToNextIncompleteStep]);
 
-            if (isBillingSameAsShipping || enhancedThemeV1) {
-                navigateToNextIncompleteStep();
-            } else {
-                navigateToStep(CheckoutStepType.Billing);
-            }
-        },
-        [navigateToNextIncompleteStep, navigateToStep, enhancedThemeV1],
-    );
-
-    const handleBillingSameAsShippingChange = useCallback(
-        (isBillingSameAsShipping: boolean): void => {
-            setState((prev) => ({ ...prev, isBillingSameAsShipping }));
-        },
-        [],
-    );
+    const handleBillingSameAsShippingChange = useCallback((): void => {
+        setState((prev) => ({ ...prev, isBillingSameAsShipping: true }));
+    }, []);
 
     const handleShippingSignIn = useCallback((): void => {
         setCustomerViewType(CustomerViewType.Login);
@@ -655,8 +644,6 @@ const Checkout = ({
 
                 const hasMultiShippingEnabled =
                     data.getConfig()?.checkoutSettings.hasMultiShippingEnabled;
-                const checkoutBillingSameAsShippingEnabled =
-                    data.getConfig()?.checkoutSettings.checkoutBillingSameAsShippingEnabled ?? true;
                 const defaultNewsletterSignupOption =
                     data.getConfig()?.shopperConfig.defaultNewsletterSignup ?? false;
                 const isMultiShippingMode =
@@ -667,7 +654,7 @@ const Checkout = ({
 
                 setState((prevState) => ({
                     ...prevState,
-                    isBillingSameAsShipping: checkoutBillingSameAsShippingEnabled,
+                    isBillingSameAsShipping: true,
                     isSubscribed: defaultNewsletterSignupOption,
                 }));
 

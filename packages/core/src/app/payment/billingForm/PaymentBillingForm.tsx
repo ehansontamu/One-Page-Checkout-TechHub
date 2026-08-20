@@ -21,7 +21,6 @@ import {
 import StaticBillingAddress from '../../billing/StaticBillingAddress';
 import { OrderComments } from '../../orderComments';
 import { getShippableItemsCount } from '../../shipping';
-import BillingSameAsShippingField from '../../shipping/BillingSameAsShippingField';
 import PaymentContext from '../PaymentContext';
 
 type PaymentBillingFormValues = BillingFormValues & { billingSameAsShipping: boolean };
@@ -52,7 +51,6 @@ const PaymentBillingFormComponent = ({
     validateForm,
     values,
     onPersist,
-    onBillingSameAsShippingChange,
     onBillingCountryChange,
     onUnhandledError,
     updateBillingAddress,
@@ -62,15 +60,13 @@ const PaymentBillingFormComponent = ({
     const hasClearedSavedAddress = useRef(false);
 
     const {
-        selectedState: { customer, config, cart, isUpdatingBillingAddress },
-    } = useCheckout(({ data, statuses }) => ({
+        selectedState: { customer, config, cart },
+    } = useCheckout(({ data }) => ({
         customer: data.getCustomer(),
         config: data.getConfig(),
         cart: data.getCart(),
-        isUpdatingBillingAddress: statuses.isUpdatingBillingAddress(),
     }));
     const {
-        shipping: { hideBillingSameAsShippingCheck },
         userJourney: { hasAddressLabel },
     } = useCapabilities();
 
@@ -102,8 +98,7 @@ const PaymentBillingFormComponent = ({
     const { enableOrderComments } = config.checkoutSettings;
     const hasShippableItems = getShippableItemsCount(cart) > 0;
     const shouldShowOrderComments = enableOrderComments && !hasShippableItems;
-    const shouldShowBillingSameAsShipping =
-        !shouldRenderStaticAddress && !hideBillingSameAsShippingCheck && hasShippableItems;
+    const shouldShowBillingSameAsShipping = !shouldRenderStaticAddress && hasShippableItems;
     const isBillingAddressCollapsed =
         shouldShowBillingSameAsShipping && values.billingSameAsShipping;
 
@@ -112,7 +107,7 @@ const PaymentBillingFormComponent = ({
             return false;
         }
 
-        // A checked, visible toggle is trusted as proof billing already mirrors shipping.
+        // TechHub always uses the shipping address for billing when physical items are present.
         if (shouldShowBillingSameAsShipping && values.billingSameAsShipping) {
             return true;
         }
@@ -189,14 +184,6 @@ const PaymentBillingFormComponent = ({
 
     return (
         <div className="checkout-billing-form" data-test="checkout-billing-form">
-            {shouldShowBillingSameAsShipping && (
-                <BillingSameAsShippingField
-                    disabled={isUpdatingBillingAddress}
-                    labelStringId="billing.same_as_shipping_label"
-                    onChange={onBillingSameAsShippingChange}
-                />
-            )}
-
             {!isBillingAddressCollapsed && (
                 <>
                     {shouldRenderStaticAddress && billingAddress && (

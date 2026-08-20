@@ -4,7 +4,6 @@ import { noop } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { lazy, object } from 'yup';
 
-import { useCapabilities } from '@bigcommerce/checkout/contexts';
 import { withLanguage, type WithLanguageProps } from '@bigcommerce/checkout/locale';
 import { Fieldset, Form } from '@bigcommerce/checkout/ui';
 
@@ -17,7 +16,6 @@ import {
 import type CheckoutStepStatus from '../../checkout/CheckoutStepStatus';
 import { withFormikExtended } from '../../common/form';
 import { getCustomFormFieldsValidationSchema } from '../../formFields';
-import BillingSameAsShippingField from '../BillingSameAsShippingField';
 import hasSelectedShippingOptions from '../hasSelectedShippingOptions';
 import { useShipping } from '../hooks/useShipping';
 import ShippingFormFooter from '../ShippingFormFooter';
@@ -50,9 +48,6 @@ export interface SingleShippingFormValues {
 const StripeShippingForm: React.FC<
     SingleShippingFormProps & WithLanguageProps & FormikProps<SingleShippingFormValues>
 > = (props) => {
-    const {
-        shipping: { hideBillingSameAsShippingCheck },
-    } = useCapabilities();
     const {
         consignments,
         countries,
@@ -125,10 +120,6 @@ const StripeShippingForm: React.FC<
                     shouldDisableSubmit={shouldDisableSubmit()}
                     step={step}
                 />
-
-                <div className="form-body">
-                    {!hideBillingSameAsShippingCheck && <BillingSameAsShippingField />}
-                </div>
             </Fieldset>
 
             <ShippingFormFooter

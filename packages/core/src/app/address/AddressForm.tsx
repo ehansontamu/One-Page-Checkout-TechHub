@@ -15,7 +15,7 @@ import { isExperimentEnabled } from '@bigcommerce/checkout/utility';
 
 import { EMPTY_ARRAY, isFloatingLabelEnabled } from '../common/utility';
 import getProviderWithCustomCheckout from '../payment/getProviderWithCustomCheckout';
-import { shouldHideTechHubAddressField } from '../techhub/techhub';
+import { isTechHubField, shouldHideTechHubAddressField } from '../techhub/techhub';
 
 import {
     type AddressFormProps,
@@ -217,7 +217,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
                             );
                         }
 
-                        return (
+                        const renderedField = (
                             <DynamicFormField
                                 autocomplete={AUTOCOMPLETE[field.name]}
                                 extraClass={`dynamic-form-field--${getAddressFormFieldLegacyName(
@@ -244,6 +244,29 @@ const AddressForm: React.FC<AddressFormProps> = ({
                                 selectedCountry={countryCode}
                             />
                         );
+
+                        if (isTechHubField(field, 'departmentCode')) {
+                            return (
+                                <React.Fragment key={`${field.id}-${field.name}`}>
+                                    {renderedField}
+                                    <div className="techhub-department-code-lookup">
+                                        <p>
+                                            Don't know your department code? Click the button below!
+                                        </p>
+                                        <a
+                                            className="button button--primary"
+                                            href="https://store-jsj7fos9p1.mybigcommerce.com/content/Department%20Lookup%20Tool/index.html"
+                                            rel="noopener noreferrer"
+                                            target="_blank"
+                                        >
+                                            TAMU DEPARTMENT CODE LOOKUP
+                                        </a>
+                                    </div>
+                                </React.Fragment>
+                            );
+                        }
+
+                        return renderedField;
                     })}
                 </div>
             </Fieldset>
