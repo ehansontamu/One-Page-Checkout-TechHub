@@ -192,7 +192,7 @@ function appConfig(options, argv) {
                                 loader: 'ts-loader',
                                 options: {
                                     onlyCompileBundledFiles: true,
-                                    // transpileOnly: true,
+                                    transpileOnly: true,
                                 },
                             },
                         ],
