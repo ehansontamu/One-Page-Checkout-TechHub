@@ -89,6 +89,7 @@ export interface CheckoutState {
     isCartEmpty: boolean;
     isRedirecting: boolean;
     hasSelectedShippingOptions: boolean;
+    hasConfirmedShippingDetails: boolean;
     isSubscribed: boolean;
     buttonConfigs: PaymentMethod[];
 }
@@ -166,6 +167,7 @@ const Checkout = ({
         isRedirecting: false,
         isMultiShippingMode: false,
         hasSelectedShippingOptions: false,
+        hasConfirmedShippingDetails: false,
         isSubscribed: false,
         buttonConfigs: [],
     });
@@ -380,8 +382,16 @@ const Checkout = ({
     );
 
     const handleReady = useCallback((): void => {
+        const customerStep = find(stepsRef.current, { type: CheckoutStepType.Customer });
+
+        if (!state.hasConfirmedShippingDetails && customerStep?.isComplete) {
+            navigateToStep(CheckoutStepType.Shipping, { isDefault: true });
+
+            return;
+        }
+
         navigateToNextIncompleteStep({ isDefault: true });
-    }, [navigateToNextIncompleteStep]);
+    }, [navigateToNextIncompleteStep, navigateToStep, state.hasConfirmedShippingDetails]);
 
     const handleNewsletterSubscription = useCallback((subscribed: boolean): void => {
         setState((prevState) => ({ ...prevState, isSubscribed: subscribed }));
@@ -426,7 +436,11 @@ const Checkout = ({
     );
 
     const handleShippingNextStep = useCallback((): void => {
-        setState((prev) => ({ ...prev, isBillingSameAsShipping: true }));
+        setState((prev) => ({
+            ...prev,
+            hasConfirmedShippingDetails: true,
+            isBillingSameAsShipping: true,
+        }));
         navigateToNextIncompleteStep();
     }, [navigateToNextIncompleteStep]);
 

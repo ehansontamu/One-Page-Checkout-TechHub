@@ -29,6 +29,7 @@ This repository is a fork of `bigcommerce/checkout-js`. This document is the dur
 - Customer saved-address selectors and save-address controls are removed.
 - Address writes force `shouldSaveAddress: false`.
 - On every checkout page load, the checkout session is reset before rendering: shipping consignments/method, billing address, and order comment are cleared.
+- Details is reopened on every new checkout visit and cannot be skipped until the shopper presses Continue, even if BigCommerce has retained valid address information.
 - Billing is always the shipping address. The customer cannot opt out, and the “My billing address is the same as my shipping address” checkbox is not displayed.
 
 ### Terms and conditions
@@ -47,3 +48,4 @@ This repository is a fork of `bigcommerce/checkout-js`. This document is the dur
 | --- | --- | --- | --- |
 | 2026-08-19 | Established the TechHub-native baseline: labels-based custom-field handling, department-code validation, guest redirect, heading/terms copy, address-book removal, and checkout-session reset. | `packages/core/src/app/techhub/`, address, shipping, billing, payment, checkout, locale, and terms components | Customer group `10`; recipient-field labels must match in both stores; production WebDAV department-code JSON must remain reachable. |
 | 2026-08-20 | Made billing permanently match shipping and added the department-code lookup control. | `AddressForm.tsx`, `CheckoutPage.tsx`, shipping forms, payment billing form | The Department Lookup Tool must remain available at the hardcoded production WebDAV URL. |
+| 2026-08-20 | Restored the normal Order Summary heading and added a per-visit Details confirmation gate. | `en.json`, `CheckoutPage.tsx` | None. |

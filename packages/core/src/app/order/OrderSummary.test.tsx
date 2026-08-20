@@ -65,7 +65,7 @@ describe('OrderSummary', () => {
         it('renders order summary', () => {
             render(<OrderSummaryTest />);
 
-        expect(screen.getByText('THIS IS A TEST')).toBeInTheDocument();
+            expect(screen.getByText('Order Summary')).toBeInTheDocument();
             expect(screen.getByText('2 Items')).toBeInTheDocument();
 
             const couponsInOrderSummary = screen.getAllByTestId('cart-coupon');
@@ -117,7 +117,7 @@ describe('OrderSummary', () => {
                 </CheckoutProvider>,
             );
 
-            expect(screen.getByText('THIS IS A TEST')).toBeInTheDocument();
+            expect(screen.getByText('Order Summary')).toBeInTheDocument();
             expect(screen.getByText('2 Items')).toBeInTheDocument();
 
             const couponsInOrderSummary = screen.getAllByTestId('cart-coupon');
@@ -162,7 +162,7 @@ describe('OrderSummary', () => {
                 </CheckoutProvider>,
             );
 
-            expect(screen.getByText('THIS IS A TEST')).toBeInTheDocument();
+            expect(screen.getByText('Order Summary')).toBeInTheDocument();
             expect(screen.getByText('2 Items')).toBeInTheDocument();
 
             const shippingCostInOrderSummary = screen.getByTestId('cart-shipping');

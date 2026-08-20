@@ -51,7 +51,7 @@ describe('OrderSummaryModal', () => {
             </CheckoutProvider>,
         );
 
-        expect(screen.getByText('THIS IS A TEST')).toBeInTheDocument();
+        expect(screen.getByText('Order Summary')).toBeInTheDocument();
 
         const couponsInOrderSummary = screen.getAllByTestId('cart-coupon');
 
@@ -93,7 +93,7 @@ describe('OrderSummaryModal', () => {
                 </CheckoutProvider>,
             );
 
-            expect(screen.getByText('THIS IS A TEST')).toBeInTheDocument();
+            expect(screen.getByText('Order Summary')).toBeInTheDocument();
 
             const couponsInOrderSummary = screen.getAllByTestId('cart-coupon');
 
