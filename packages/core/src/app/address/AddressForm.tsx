@@ -1,6 +1,6 @@
 import { type FormField, isExtraField } from '@bigcommerce/checkout-sdk/essential';
 import { forIn, noop } from 'lodash';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useCapabilities, useCheckout, useLocale } from '@bigcommerce/checkout/contexts';
 import { TranslatedString } from '@bigcommerce/checkout/locale';
@@ -15,7 +15,13 @@ import { isExperimentEnabled } from '@bigcommerce/checkout/utility';
 
 import { EMPTY_ARRAY, isFloatingLabelEnabled } from '../common/utility';
 import getProviderWithCustomCheckout from '../payment/getProviderWithCustomCheckout';
-import { isTechHubField, shouldHideTechHubAddressField } from '../techhub/techhub';
+import {
+    getTechHubFieldOptionLabel,
+    getTechHubDeliveryLocations,
+    isTechHubField,
+    loadTechHubDeliveryLocations,
+    shouldHideTechHubAddressField,
+} from '../techhub/techhub';
 
 import {
     type AddressFormProps,
@@ -79,6 +85,19 @@ const AddressForm: React.FC<AddressFormProps> = ({
 
     const containerRef = useRef<HTMLDivElement>(null);
     const nextElementRef = useRef<HTMLElement | null>(null);
+    const [selectedCollegeUnit, setSelectedCollegeUnit] = useState('');
+    const [deliveryLocationsStatus, setDeliveryLocationsStatus] = useState<
+        'idle' | 'loading' | 'loaded' | 'unavailable'
+    >('idle');
+    const collegeUnitField = useMemo(
+        () => formFields.find((field) => isTechHubField(field, 'collegeUnit')),
+        [formFields],
+    );
+    const deliveryLocationField = useMemo(
+        () => formFields.find((field) => isTechHubField(field, 'deliveryLocation')),
+        [formFields],
+    );
+    const deliveryLocations = getTechHubDeliveryLocations(selectedCollegeUnit);
 
     useEffect(() => {
         const { current } = containerRef;
@@ -89,6 +108,67 @@ const AddressForm: React.FC<AddressFormProps> = ({
             );
         }
     }, []);
+
+    useEffect(() => {
+        if (!collegeUnitField) {
+            return;
+        }
+
+        const collegeUnitInput = document.getElementById(
+            getAddressFormFieldInputId(collegeUnitField.name),
+        ) as HTMLInputElement | HTMLSelectElement | null;
+
+        if (!collegeUnitInput) {
+            return;
+        }
+
+        const updateSelectedCollegeUnit = () => {
+            const selectedOption =
+                collegeUnitInput instanceof HTMLSelectElement
+                    ? collegeUnitInput.selectedOptions[0]
+                    : undefined;
+
+            setSelectedCollegeUnit(
+                selectedOption?.textContent ||
+                    getTechHubFieldOptionLabel(collegeUnitField, collegeUnitInput.value),
+            );
+        };
+
+        updateSelectedCollegeUnit();
+        collegeUnitInput.addEventListener('change', updateSelectedCollegeUnit);
+
+        return () => {
+            collegeUnitInput.removeEventListener('change', updateSelectedCollegeUnit);
+        };
+    }, [collegeUnitField?.name]);
+
+    useEffect(() => {
+        if (!deliveryLocationField || !selectedCollegeUnit) {
+            setDeliveryLocationsStatus('idle');
+
+            return;
+        }
+
+        let isActive = true;
+
+        setDeliveryLocationsStatus('loading');
+
+        void loadTechHubDeliveryLocations()
+            .then(() => {
+                if (isActive) {
+                    setDeliveryLocationsStatus('loaded');
+                }
+            })
+            .catch(() => {
+                if (isActive) {
+                    setDeliveryLocationsStatus('unavailable');
+                }
+            });
+
+        return () => {
+            isActive = false;
+        };
+    }, [deliveryLocationField?.name, selectedCollegeUnit]);
 
     const syncNonFormikValue = useCallback(
         (fieldName: string, value: string | string[]) => {
@@ -106,10 +186,18 @@ const AddressForm: React.FC<AddressFormProps> = ({
     );
 
     const handleDynamicFormFieldChange = useCallback(
-        (name: string) => (value: string | string[]) => {
-            syncNonFormikValue(name, value);
+        (field: FormField) => (value: string | string[]) => {
+            if (isTechHubField(field, 'collegeUnit') && deliveryLocationField) {
+                setSelectedCollegeUnit(
+                    typeof value === 'string' ? getTechHubFieldOptionLabel(field, value) : '',
+                );
+                setFieldValue(deliveryLocationField.name, '');
+                onChange(deliveryLocationField.name, '');
+            }
+
+            syncNonFormikValue(field.name, value);
         },
-        [syncNonFormikValue],
+        [deliveryLocationField, onChange, setFieldValue, syncNonFormikValue],
     );
 
     const handleAutocompleteChange = useCallback(
@@ -164,7 +252,13 @@ const AddressForm: React.FC<AddressFormProps> = ({
             <Fieldset>
                 <div className="checkout-address" ref={containerRef}>
                     {formFields.map((field) => {
-                        if (field.hidden || shouldHideTechHubAddressField(field.name)) return null;
+                        if (
+                            field.hidden ||
+                            shouldHideTechHubAddressField(field.name) ||
+                            isTechHubField(field, 'deliveryLocation')
+                        ) {
+                            return null;
+                        }
 
                         const addressFieldName = field.name;
                         const translatedPlaceholderId = PLACEHOLDER[addressFieldName];
@@ -211,7 +305,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
                                     inputId={getAddressFormFieldInputId(addressFieldName)}
                                     isFloatingLabelEnabled={isFloatingLabelEnabledValue}
                                     key={`${field.id}-${field.name}`}
-                                    onChange={handleDynamicFormFieldChange(addressFieldName)}
+                                    onChange={handleDynamicFormFieldChange(field)}
                                     parentFieldName={getParentFieldName()}
                                 />
                             );
@@ -238,7 +332,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
                                         <TranslatedString id={LABEL[field.name]} />
                                     )
                                 }
-                                onChange={handleDynamicFormFieldChange(addressFieldName)}
+                                onChange={handleDynamicFormFieldChange(field)}
                                 parentFieldName={getParentFieldName()}
                                 placeholder={getPlaceholderValue(field, translatedPlaceholderId)}
                                 selectedCountry={countryCode}
@@ -262,6 +356,49 @@ const AddressForm: React.FC<AddressFormProps> = ({
                                             TAMU DEPARTMENT CODE LOOKUP
                                         </a>
                                     </div>
+                                </React.Fragment>
+                            );
+                        }
+
+                        if (isTechHubField(field, 'collegeUnit') && deliveryLocationField) {
+                            const deliveryLocationOptions = deliveryLocations?.map((location) => ({
+                                label: location,
+                                value: location,
+                            }));
+                            const deliveryLocationRenderedField =
+                                deliveryLocationOptions && deliveryLocationOptions.length ? (
+                                    <DynamicFormField
+                                        autocomplete="off"
+                                        extraClass="dynamic-form-field--delivery-location"
+                                        field={{
+                                            ...deliveryLocationField,
+                                            fieldType: DynamicFormFieldType.DROPDOWN,
+                                            options: { items: deliveryLocationOptions },
+                                            required: true,
+                                        }}
+                                        inputId={getAddressFormFieldInputId(
+                                            deliveryLocationField.name,
+                                        )}
+                                        isFloatingLabelEnabled={isFloatingLabelEnabledValue}
+                                        label={deliveryLocationField.label}
+                                        onChange={handleDynamicFormFieldChange(
+                                            deliveryLocationField,
+                                        )}
+                                        parentFieldName={getParentFieldName()}
+                                        placeholder={language.translate('common.please_select_text')}
+                                        selectedCountry={countryCode}
+                                    />
+                                ) : null;
+
+                            return (
+                                <React.Fragment key={`${field.id}-${field.name}`}>
+                                    {renderedField}
+                                    {deliveryLocationsStatus === 'loading' && (
+                                        <p className="techhub-delivery-location-loading">
+                                            Loading delivery locations…
+                                        </p>
+                                    )}
+                                    {deliveryLocationRenderedField}
                                 </React.Fragment>
                             );
                         }

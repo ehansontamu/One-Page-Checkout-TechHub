@@ -16,7 +16,9 @@ import { DynamicFormFieldType } from '@bigcommerce/checkout/ui';
 
 import {
     isTechHubDepartmentCodeValid,
+    isTechHubDeliveryLocationRequired,
     isTechHubField,
+    getTechHubFieldOptionLabel,
     TECHHUB_ALLOWED_CHARACTERS,
 } from '../techhub/techhub';
 
@@ -138,6 +140,33 @@ export default memoize(function getCustomFormFieldsValidationSchema({
                                     'Invalid Department Code',
                                     isTechHubDepartmentCodeValid,
                                 );
+                        }
+
+                        if (isTechHubField({ label }, 'deliveryLocation')) {
+                            const collegeUnitField = formFields.find((field) =>
+                                isTechHubField(field, 'collegeUnit'),
+                            );
+
+                            schema[name] = string().test(
+                                'techhub-delivery-location',
+                                'Please select a Delivery Location',
+                                function validateDeliveryLocation(value) {
+                                    const collegeUnit = collegeUnitField
+                                        ? this.parent?.[collegeUnitField.name]
+                                        : undefined;
+
+                                    return (
+                                        !isTechHubDeliveryLocationRequired(
+                                            typeof collegeUnit === 'string' && collegeUnitField
+                                                ? getTechHubFieldOptionLabel(
+                                                      collegeUnitField,
+                                                      collegeUnit,
+                                                  )
+                                                : undefined,
+                                        ) || Boolean(value?.trim())
+                                    );
+                                },
+                            );
                         }
 
                         return schema;

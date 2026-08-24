@@ -24,7 +24,11 @@ import {
     getCustomFormFieldsValidationSchema,
 } from '../formFields';
 import { PaymentMethodId } from '../payment/paymentMethod';
-import { isTechHubField, loadTechHubDepartmentCodes } from '../techhub/techhub';
+import {
+    isTechHubField,
+    loadTechHubDeliveryLocations,
+    loadTechHubDepartmentCodes,
+} from '../techhub/techhub';
 
 import hasSelectedShippingOptions from './hasSelectedShippingOptions';
 import { useShipping } from './hooks/useShipping';
@@ -103,6 +107,7 @@ const SingleShippingForm: React.FC<
         | undefined
     >(undefined);
     const hasLoadedDepartmentCodes = useRef(false);
+    const hasLoadedDeliveryLocations = useRef(false);
 
     propsRef.current = { values, shippingAddress, isValid };
 
@@ -160,6 +165,25 @@ const SingleShippingForm: React.FC<
         hasLoadedDepartmentCodes.current = true;
 
         void loadTechHubDepartmentCodes()
+            .catch(() => undefined)
+            .finally(() => {
+                void validateForm();
+            });
+    }, [getFields, validateForm, values.shippingAddress?.countryCode]);
+
+    useEffect(() => {
+        const fields = getFields(values.shippingAddress?.countryCode);
+        const hasDeliveryLocationField = fields.some((field) =>
+            isTechHubField(field, 'deliveryLocation'),
+        );
+
+        if (!hasDeliveryLocationField || hasLoadedDeliveryLocations.current) {
+            return;
+        }
+
+        hasLoadedDeliveryLocations.current = true;
+
+        void loadTechHubDeliveryLocations()
             .catch(() => undefined)
             .finally(() => {
                 void validateForm();
