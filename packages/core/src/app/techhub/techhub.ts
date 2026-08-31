@@ -3,12 +3,32 @@ import { type FormField } from '@bigcommerce/checkout-sdk';
 export const TECHHUB_DEPARTMENT_CODES_URL =
     'https://store-jsj7fos9p1.mybigcommerce.com/content/JSON%20Files/TechhubDeptOutputBig.json';
 
-// The production WebDAV URL will be supplied before this feature is deployed. Keeping the
-// development URL separate means the external data is never bundled with checkout-js.
-export const TECHHUB_DELIVERY_LOCATIONS_URL =
-    process.env.NODE_ENV === 'development'
-        ? 'http://127.0.0.1:8080/checkout_address_whitelist.json'
-        : '';
+function getTechHubDeliveryLocationsUrl(): string {
+    // Retain the local endpoint when using auto-loader-dev.js, even though the checkout page
+    // itself is hosted by the Test storefront.
+    if (process.env.NODE_ENV === 'development') {
+        return 'http://127.0.0.1:8080/checkout_address_whitelist.json';
+    }
+
+    if (typeof window === 'undefined') {
+        return '';
+    }
+
+    switch (window.location.hostname) {
+        case 'techhubtest.mybigcommerce.com':
+            return 'https://store-jje9unvzjs.mybigcommerce.com/content/Scripts/checkout_address_whitelist.json';
+
+        case 'tamu.mybigcommerce.com':
+            return 'https://store-jsj7fos9p1.mybigcommerce.com/content/JSON%20Files/checkout_address_whitelist.json';
+
+        default:
+            return '';
+    }
+}
+
+// This is always loaded separately from checkout-js, and only for an explicitly recognized
+// storefront. Unknown storefronts fail open by leaving the Delivery Location field hidden.
+export const TECHHUB_DELIVERY_LOCATIONS_URL = getTechHubDeliveryLocationsUrl();
 
 export const TECHHUB_ALLOWED_CHARACTERS = /^[a-zA-Z0-9\-()$,. ]*$/;
 
@@ -41,6 +61,19 @@ function normalizeLabel(label?: string): string {
 
 function getDeliveryLocationLabel({ building, room }: TechHubDeliveryLocationEntry): string {
     return [building, room].map((value) => normalizeLabel(value)).filter(Boolean).join(' — ');
+}
+
+function sortDeliveryLocationLabels(locations: string[]): string[] {
+    return locations.sort((first, second) => {
+        const firstHasBuildingAndRoom = first.includes('—') || first === first.toUpperCase();
+        const secondHasBuildingAndRoom = second.includes('—') || second === second.toUpperCase();
+
+        if (firstHasBuildingAndRoom !== secondHasBuildingAndRoom) {
+            return Number(firstHasBuildingAndRoom) - Number(secondHasBuildingAndRoom);
+        }
+
+        return first.localeCompare(second, undefined, { numeric: true, sensitivity: 'base' });
+    });
 }
 
 export function isTechHubField(field: Pick<FormField, 'label'>, name: TechHubField): boolean {
@@ -118,11 +151,13 @@ export function loadTechHubDeliveryLocations(): Promise<TechHubDeliveryLocations
                 deliveryLocations = new Map(
                     Object.entries(locationsByCollege).map(([college, locations]) => [
                         normalizeLabel(college),
-                        Array.from(
-                            new Set(
-                                locations
-                                    .map(getDeliveryLocationLabel)
-                                    .filter((location): location is string => Boolean(location)),
+                        sortDeliveryLocationLabels(
+                            Array.from(
+                                new Set(
+                                    locations
+                                        .map(getDeliveryLocationLabel)
+                                        .filter((location): location is string => Boolean(location)),
+                                ),
                             ),
                         ),
                     ]),
