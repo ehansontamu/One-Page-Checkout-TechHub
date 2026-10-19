@@ -1,0 +1,626 @@
+{
+  "TAMU - Athletics": [
+    {
+      "building": "KYLE",
+      "room": "Loading Dock",
+      "notes": ""
+    }
+  ],
+  "TAMU - College of Arts and Sciences": [
+    {
+      "building": "LAAH",
+      "room": "425",
+      "notes": ""
+    },
+    {
+      "building": "WCSS",
+      "room": "119",
+      "notes": ""
+    },
+    {
+      "building": "HELD",
+      "room": "005",
+      "notes": ""
+    },
+    {
+      "building": "BLOC",
+      "room": "418",
+      "notes": ""
+    },
+    {
+      "building": "McAllen",
+      "room": "",
+      "notes": ""
+    },
+    {
+      "building": "ACAD",
+      "room": "122",
+      "notes": ""
+    },
+    {
+      "building": "CHEM",
+      "room": "2307",
+      "notes": ""
+    },
+    {
+      "building": "ACAD",
+      "room": "204E",
+      "notes": ""
+    },
+    {
+      "building": "Dallas",
+      "room": "",
+      "notes": ""
+    },
+    {
+      "building": "PSYC",
+      "room": "230/421",
+      "notes": ""
+    }
+  ],
+  "TAMU - College of Education & Human Development": [
+    {
+      "building": "EDCT",
+      "room": "439",
+      "notes": ""
+    },
+    {
+      "building": "GGB",
+      "room": "115",
+      "notes": ""
+    },
+    {
+      "building": "EDCT",
+      "room": "308",
+      "notes": ""
+    },
+    {
+      "building": "EDCT",
+      "room": "704",
+      "notes": ""
+    },
+    {
+      "building": "GGB",
+      "room": "115",
+      "notes": ""
+    },
+    {
+      "building": "CSCC",
+      "room": "Front Desk",
+      "notes": ""
+    },
+    {
+      "building": "EDCT",
+      "room": "404",
+      "notes": ""
+    }
+  ],
+  "TAMU - College of Engineering": [
+    {
+      "building": "CVLB",
+      "room": "115F",
+      "notes": ""
+    },
+    {
+      "building": "ZACH",
+      "room": "541",
+      "notes": ""
+    },
+    {
+      "building": "HRBB",
+      "room": "701",
+      "notes": ""
+    },
+    {
+      "building": "ETB",
+      "room": "3019",
+      "notes": ""
+    },
+    {
+      "building": "JCAIN",
+      "room": "327",
+      "notes": ""
+    },
+    {
+      "building": "PETR",
+      "room": "102",
+      "notes": ""
+    },
+    {
+      "building": "AIEN",
+      "room": "M210",
+      "notes": ""
+    },
+    {
+      "building": "RICH",
+      "room": "901F",
+      "notes": ""
+    },
+    {
+      "building": "Galveston",
+      "room": "",
+      "notes": ""
+    },
+    {
+      "building": "TTI",
+      "room": "Shipping Receiving",
+      "notes": ""
+    },
+    {
+      "building": "ESL",
+      "room": "",
+      "notes": ""
+    },
+    {
+      "building": "WEB",
+      "room": "076",
+      "notes": ""
+    },
+    {
+      "building": "THOM",
+      "room": "203",
+      "notes": ""
+    },
+    {
+      "building": "PETR",
+      "room": "454",
+      "notes": ""
+    },
+    {
+      "building": "CHEN",
+      "room": "117",
+      "notes": ""
+    },
+    {
+      "building": "RIC",
+      "room": "",
+      "notes": "Always have to call when arriving"
+    },
+    {
+      "building": "NCMT",
+      "room": "218",
+      "notes": ""
+    },
+    {
+      "building": "ZACH",
+      "room": "541",
+      "notes": ""
+    },
+    {
+      "building": "HEB",
+      "room": "106",
+      "notes": ""
+    },
+    {
+      "building": "PETR",
+      "room": "354",
+      "notes": ""
+    }
+  ],
+  "TAMU - College of Veterinary Medicine": [
+    {
+      "building": "VIDI",
+      "room": "200",
+      "notes": ""
+    },
+    {
+      "building": "VIDI",
+      "room": "372",
+      "notes": ""
+    }
+  ],
+  "TAMU - Division of Finance and Business Services": [
+    {
+      "building": "GSC",
+      "room": "3209",
+      "notes": ""
+    },
+    {
+      "building": "GSC",
+      "room": "3205",
+      "notes": ""
+    }
+  ],
+  "TAMU - Division of Human Resources and Organizational Effectiveness": [
+    {
+      "building": "GSC",
+      "room": "3205",
+      "notes": ""
+    }
+  ],
+  "TAMU - Division of Marketing & Communications": [
+    {
+      "building": "GSC",
+      "room": "3209",
+      "notes": ""
+    }
+  ],
+  "TAMU - Division of Research": [
+    {
+      "building": "GSC",
+      "room": "3201",
+      "notes": ""
+    }
+  ],
+  "TAMU - Division of Student Affairs": [
+    {
+      "building": "JJKB",
+      "room": "227",
+      "notes": ""
+    },
+    {
+      "building": "Galveston",
+      "room": "",
+      "notes": ""
+    },
+    {
+      "building": "MSC",
+      "room": "Loading Dock",
+      "notes": ""
+    }
+  ],
+  "TAMU - Executive Support": [
+    {
+      "building": "GSC",
+      "room": "2501",
+      "notes": ""
+    },
+    {
+      "building": "GSC",
+      "room": "2501",
+      "notes": ""
+    },
+    {
+      "building": "DC",
+      "room": "",
+      "notes": ""
+    }
+  ],
+  "TAMU - Facilities and Energy Services": [
+    {
+      "building": "WCOB03",
+      "room": "",
+      "notes": ""
+    }
+  ],
+  "TAMU - Mays Business School": [
+    {
+      "building": "WCBA",
+      "room": "339",
+      "notes": ""
+    }
+  ],
+  "TAMU - McAllen Support": [
+    {
+      "building": "McAllen",
+      "room": "",
+      "notes": ""
+    }
+  ],
+  "TAMU - Office of Community Engagement": [
+    {
+      "building": "GSC",
+      "room": "3209",
+      "notes": ""
+    }
+  ],
+  "TAMU - School of Architecture": [
+    {
+      "building": "ARCA",
+      "room": "122",
+      "notes": ""
+    }
+  ],
+  "TAMU - School of Law": [
+    {
+      "building": "Ft. Worth",
+      "room": "",
+      "notes": ""
+    }
+  ],
+  "TAMU - School of Performance, Visualization & Fine Arts": [
+    {
+      "building": "ARCA",
+      "room": "122",
+      "notes": ""
+    },
+    {
+      "building": "PAV",
+      "room": "237",
+      "notes": ""
+    }
+  ],
+  "TAMU - Technology Services": [
+    {
+      "building": "CSA",
+      "room": "104",
+      "notes": ""
+    },
+    {
+      "building": "HPEB",
+      "room": "Help Desk",
+      "notes": ""
+    },
+    {
+      "building": "ILCB",
+      "room": "312",
+      "notes": ""
+    },
+    {
+      "building": "NGLE",
+      "room": "005b",
+      "notes": ""
+    },
+    {
+      "building": "ARCA",
+      "room": "122",
+      "notes": ""
+    },
+    {
+      "building": "ANNEX",
+      "room": "3.609",
+      "notes": ""
+    },
+    {
+      "building": "SCC",
+      "room": "210C",
+      "notes": ""
+    },
+    {
+      "building": "GSC",
+      "room": "2501",
+      "notes": ""
+    },
+    {
+      "building": "GSC",
+      "room": "3205",
+      "notes": ""
+    },
+    {
+      "building": "ZACH",
+      "room": "541",
+      "notes": ""
+    },
+    {
+      "building": "ETB",
+      "room": "3019",
+      "notes": ""
+    },
+    {
+      "building": "WCOB02",
+      "room": "110",
+      "notes": ""
+    },
+    {
+      "building": "ACAD",
+      "room": "122",
+      "notes": ""
+    },
+    {
+      "building": "VRSC",
+      "room": "502A",
+      "notes": ""
+    },
+    {
+      "building": "JJKB",
+      "room": "227",
+      "notes": ""
+    },
+    {
+      "building": "E29TH",
+      "room": "",
+      "notes": "requires door code 139725"
+    },
+    {
+      "building": "REYN",
+      "room": "102",
+      "notes": ""
+    },
+    {
+      "building": "CSA",
+      "room": "104",
+      "notes": ""
+    },
+    {
+      "building": "ANNEX",
+      "room": "3.109G",
+      "notes": ""
+    },
+    {
+      "building": "GSC",
+      "room": "3305",
+      "notes": ""
+    },
+    {
+      "building": "WCBA",
+      "room": "339",
+      "notes": ""
+    },
+    {
+      "building": "VIDI",
+      "room": "200",
+      "notes": ""
+    }
+  ],
+  "Galveston - Texas A&M Galveston": [
+    {
+      "building": "Galveston",
+      "room": "",
+      "notes": ""
+    }
+  ],
+  "Health - Texas A&M Health": [
+    {
+      "building": "Dallas",
+      "room": "",
+      "notes": ""
+    },
+    {
+      "building": "HPEB",
+      "room": "Help Desk",
+      "notes": ""
+    },
+    {
+      "building": "SPHA",
+      "room": "308",
+      "notes": ""
+    },
+    {
+      "building": "HPEB",
+      "room": "2004",
+      "notes": ""
+    },
+    {
+      "building": "REYN",
+      "room": "102",
+      "notes": ""
+    },
+    {
+      "building": "Houston",
+      "room": "",
+      "notes": ""
+    },
+    {
+      "building": "San Angelo",
+      "room": "",
+      "notes": ""
+    },
+    {
+      "building": "Round Rock",
+      "room": "",
+      "notes": ""
+    },
+    {
+      "building": "CPP",
+      "room": "3000",
+      "notes": ""
+    },
+    {
+      "building": "CB1",
+      "room": "4121",
+      "notes": ""
+    },
+    {
+      "building": "BEUT",
+      "room": "006",
+      "notes": ""
+    },
+    {
+      "building": "CB1",
+      "room": "4300",
+      "notes": ""
+    },
+    {
+      "building": "E29TH",
+      "room": "",
+      "notes": ""
+    },
+    {
+      "building": "Dallas",
+      "room": "",
+      "notes": ""
+    },
+    {
+      "building": "HPEB",
+      "room": "LL31",
+      "notes": ""
+    },
+    {
+      "building": "MREB",
+      "room": "Shipping Receiving",
+      "notes": ""
+    },
+    {
+      "building": "Round Rock",
+      "room": "",
+      "notes": ""
+    },
+    {
+      "building": "Kingsville",
+      "room": "",
+      "notes": ""
+    },
+    {
+      "building": "HPEB",
+      "room": "3084",
+      "notes": ""
+    },
+    {
+      "building": "McAllen",
+      "room": "",
+      "notes": ""
+    }
+  ],
+  "TTI - Texas A&M Transportation Institute": [
+    {
+      "building": "TTI",
+      "room": "2111",
+      "notes": ""
+    }
+  ],
+  "TAMU - The Bush School": [
+    {
+      "building": "ALLN",
+      "room": "2004",
+      "notes": ""
+    },
+    {
+      "building": "DC",
+      "room": "",
+      "notes": ""
+    }
+  ],
+  "TAMU - Transportation Services": [
+    {
+      "building": "PRB",
+      "room": "350",
+      "notes": ""
+    },
+    {
+      "building": "POLO",
+      "room": "Garage",
+      "notes": ""
+    },
+    {
+      "building": "ILCB",
+      "room": "312",
+      "notes": ""
+    },
+    {
+      "building": "ARCA",
+      "room": "122",
+      "notes": ""
+    }
+  ],
+  "TAMU - University Libraries": [
+    {
+      "building": "ANNEX",
+      "room": "3.109G",
+      "notes": ""
+    },
+    {
+      "building": "ANNEX",
+      "room": "3.609",
+      "notes": ""
+    }
+  ],
+  "TAMU - University Police Department": [
+    {
+      "building": "ONRP",
+      "room": "220",
+      "notes": ""
+    }
+  ],
+  "TAMU - Veterinary Medicine & Biomedical Sciences": [
+    {
+      "building": "VIDI",
+      "room": "200",
+      "notes": ""
+    },
+    {
+      "building": "VIDI",
+      "room": "372",
+      "notes": ""
+    }
+  ]
+}

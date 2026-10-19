@@ -40,6 +40,14 @@ This repository is a fork of `bigcommerce/checkout-js`. This document is the dur
 - The terms text is customized for TechHub.
 - The checkout link uses the relative path `/terms-and-conditions/`, so it automatically points to the corresponding page on test or production. Ensure that page exists at the same path in both stores.
 
+## Delivery-location whitelist reference
+
+- The repository reference is [`data/checkout_address_whitelist.json`](data/checkout_address_whitelist.json), converted from `checkout_address_whitelist.csv` on 2026-10-19. It contains 114 location entries grouped by the CSV's exact `college_unit` labels, matching the format consumed by `loadTechHubDeliveryLocations()`.
+- Each entry preserves `building`, `room`, and `notes` as strings, including empty values and leading zeros. Checkout uses building and room for its dropdown labels; notes are retained for future use.
+- This is the College/Unit delivery-location whitelist. Department-code validation uses the separate `TechhubDeptOutputBig.json` file.
+- The reference file is not automatically copied into `build/` or `dist/` or uploaded by a checkout build. For production, upload it separately through WebDAV to `/content/JSON Files/checkout_address_whitelist.json`. Checkout fetches it at `https://store-jsj7fos9p1.mybigcommerce.com/content/JSON%20Files/checkout_address_whitelist.json`.
+- For Test, upload the same file to `/content/Scripts/checkout_address_whitelist.json` on the Test store. For local development, serve it at `http://127.0.0.1:8080/checkout_address_whitelist.json`. Keep the repository reference and deployed copies in sync when updating the whitelist, and verify the HTTPS endpoint returns the JSON before release.
+
 ## Maintenance notes
 
 - Before upgrading from upstream, compare this document and reapply each item deliberately rather than blindly copying files.
@@ -51,6 +59,7 @@ This repository is a fork of `bigcommerce/checkout-js`. This document is the dur
 
 | Date | Purpose | Affected source | Store dependency |
 | --- | --- | --- | --- |
+| 2026-10-19 | Stored the supplied CSV as a reusable delivery-location whitelist reference, preserving all rows and values in the existing runtime format. | `data/checkout_address_whitelist.json`, `TECHHUB_CUSTOMIZATIONS.md` | Upload the JSON separately to the configured Test and production WebDAV content paths; adding the reference does not deploy it. |
 | 2026-08-19 | Established the TechHub-native baseline: labels-based custom-field handling, department-code validation, guest redirect, heading/terms copy, address-book removal, and checkout-session reset. | `packages/core/src/app/techhub/`, address, shipping, billing, payment, checkout, locale, and terms components | Customer group `10`; recipient-field labels must match in both stores; production WebDAV department-code JSON must remain reachable. |
 | 2026-08-20 | Made billing permanently match shipping and added the department-code lookup control. | `AddressForm.tsx`, `CheckoutPage.tsx`, shipping forms, payment billing form | The Department Lookup Tool must remain available at the hardcoded production WebDAV URL. |
 | 2026-08-20 | Restored the normal Order Summary heading and added a per-visit Details confirmation gate. | `en.json`, `CheckoutPage.tsx` | None. |
