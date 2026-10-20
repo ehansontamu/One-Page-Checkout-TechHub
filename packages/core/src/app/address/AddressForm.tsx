@@ -21,6 +21,7 @@ import {
     isTechHubField,
     loadTechHubDeliveryLocations,
     shouldHideTechHubAddressField,
+    TECHHUB_RECIPIENT_UIN_MAX_LENGTH,
 } from '../techhub/techhub';
 
 import {
@@ -317,7 +318,11 @@ const AddressForm: React.FC<AddressFormProps> = ({
                                 extraClass={`dynamic-form-field--${getAddressFormFieldLegacyName(
                                     addressFieldName,
                                 )}`}
-                                field={field}
+                                field={
+                                    isTechHubField(field, 'recipientUin')
+                                        ? { ...field, maxLength: TECHHUB_RECIPIENT_UIN_MAX_LENGTH }
+                                        : field
+                                }
                                 inputId={getAddressFormFieldInputId(addressFieldName)}
                                 // stateOrProvince can sometimes be a dropdown or input, so relying on id is not sufficient
                                 isFloatingLabelEnabled={isFloatingLabelEnabledValue}
@@ -338,6 +343,21 @@ const AddressForm: React.FC<AddressFormProps> = ({
                                 selectedCountry={countryCode}
                             />
                         );
+
+                        if (isTechHubField(field, 'recipientUin')) {
+                            return (
+                                <div
+                                    className="techhub-recipient-uin"
+                                    key={`${field.id}-${field.name}`}
+                                >
+                                    {renderedField}
+                                    <p className="techhub-recipient-uin-help optimizedCheckout-contentSecondary">
+                                        Maximum {TECHHUB_RECIPIENT_UIN_MAX_LENGTH} characters{' '}
+                                        (including commas and spaces).
+                                    </p>
+                                </div>
+                            );
+                        }
 
                         if (isTechHubField(field, 'departmentCode')) {
                             return (

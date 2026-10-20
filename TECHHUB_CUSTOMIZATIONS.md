@@ -21,6 +21,7 @@ This repository is a fork of `bigcommerce/checkout-js`. This document is the dur
 ### TechHub address fields
 
 - The recipient College/Unit, recipient UIN/name, recipient account number, and department-code fields are recognized by their labels.
+- Recipient UIN(s) or Name(s) is limited to 250 characters for the whole field, including commas and spaces. Checkout applies a textarea maximum and validates the original input length, while retaining the existing required-field and allowed-character rules. Helper text explains the limit. This policy matches the field by label so it works with different Test and production IDs.
 - Department codes are validated against `https://store-jsj7fos9p1.mybigcommerce.com/content/JSON%20Files/TechhubDeptOutputBig.json`.
 - A department-code lookup prompt and button appear directly below the department-code field. The button opens `https://store-jsj7fos9p1.mybigcommerce.com/content/Department%20Lookup%20Tool/index.html`.
 - Delivery Location is a dependent address field: after a shopper chooses Recipient College/Unit, it becomes a required dropdown only when external location data contains valid options for that unit. It stores only its own field value and does not alter the address.
@@ -59,6 +60,7 @@ This repository is a fork of `bigcommerce/checkout-js`. This document is the dur
 
 | Date | Purpose | Affected source | Store dependency |
 | --- | --- | --- | --- |
+| 2026-10-20 | Limited Recipient UIN(s) or Name(s) to 250 characters with input enforcement, form validation, and helper text. | `techhub.ts`, `AddressForm.tsx`, `AddressForm.scss`, `getCustomFormFieldsValidationSchema.ts`, focused address and validation tests | Rebuild and deploy checkout; the Recipient UIN/name label must match in both stores. No BigCommerce field-ID change is needed. |
 | 2026-10-19 | Stored the supplied CSV as a reusable delivery-location whitelist reference, preserving all rows and values in the existing runtime format. | `data/checkout_address_whitelist.json`, `TECHHUB_CUSTOMIZATIONS.md` | Upload the JSON separately to the configured Test and production WebDAV content paths; adding the reference does not deploy it. |
 | 2026-08-19 | Established the TechHub-native baseline: labels-based custom-field handling, department-code validation, guest redirect, heading/terms copy, address-book removal, and checkout-session reset. | `packages/core/src/app/techhub/`, address, shipping, billing, payment, checkout, locale, and terms components | Customer group `10`; recipient-field labels must match in both stores; production WebDAV department-code JSON must remain reachable. |
 | 2026-08-20 | Made billing permanently match shipping and added the department-code lookup control. | `AddressForm.tsx`, `CheckoutPage.tsx`, shipping forms, payment billing form | The Department Lookup Tool must remain available at the hardcoded production WebDAV URL. |

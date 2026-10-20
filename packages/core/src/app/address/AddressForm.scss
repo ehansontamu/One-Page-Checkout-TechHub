@@ -12,6 +12,20 @@
     margin-left: -1 * spacing("half");
     margin-right: -1 * spacing("half");
 
+    .techhub-recipient-uin {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .techhub-recipient-uin-help {
+        margin: 0 0 spacing("half");
+        padding: 0 spacing("half");
+    }
+
+    .floating-form-field + .techhub-recipient-uin-help {
+        padding: 0 0.5 * $floating-form-field-spacing;
+    }
+
     .dynamic-form-addressState,
     .dynamic-form-field {
         display: block;

@@ -50,6 +50,59 @@ describe('getCustomFormFieldsValidationSchema', () => {
         });
     });
 
+    describe.each(['field_52', 'field_999'])('TechHub recipient UIN field %s', (name) => {
+        let schema: ObjectSchema<CustomFormFieldValues>;
+
+        beforeEach(() => {
+            schema = getCustomFormFieldsValidationSchema({
+                formFields: [
+                    {
+                        custom: true,
+                        default: '',
+                        fieldType: 'multiline',
+                        id: name,
+                        label: 'Recipient UIN(s) or Name(s) (comma separated)',
+                        name,
+                        required: true,
+                        type: 'string',
+                    },
+                ],
+            });
+        });
+
+        it('accepts exactly 250 characters, including commas and spaces', async () => {
+            const value = '123456789, '.repeat(22) + 'Jane Doe';
+
+            expect(value.length).toBe(250);
+            expect(await schema.isValid({ customFields: { [name]: value } })).toBe(true);
+        });
+
+        it.each([
+            ['251 characters', '1'.repeat(251)],
+            ['250 characters plus a leading space', ` ${'1'.repeat(250)}`],
+            ['250 characters plus a trailing space', `${'1'.repeat(250)} `],
+        ])(
+            'rejects %s',
+            async (_description, value) => {
+                await expect(schema.validate({ customFields: { [name]: value } })).rejects.toThrow(
+                    'Recipient UIN(s) or Name(s) must be 250 characters or fewer',
+                );
+            },
+        );
+
+        it('continues to reject blank values', async () => {
+            await expect(schema.validate({ customFields: { [name]: ' ' } })).rejects.toThrow(
+                'Recipient UIN(s) or Name(s) cannot be blank',
+            );
+        });
+
+        it('continues to reject invalid characters', async () => {
+            await expect(schema.validate({ customFields: { [name]: 'Jane<>Doe' } })).rejects.toThrow(
+                'Recipient UIN(s) or Name(s) contains invalid characters',
+            );
+        });
+    });
+
     describe('when custom integer field is present', () => {
         let schema: ObjectSchema<CustomFormFieldValues>;
 

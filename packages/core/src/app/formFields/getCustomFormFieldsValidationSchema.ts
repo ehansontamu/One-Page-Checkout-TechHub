@@ -20,6 +20,7 @@ import {
     isTechHubField,
     getTechHubFieldOptionLabel,
     TECHHUB_ALLOWED_CHARACTERS,
+    TECHHUB_RECIPIENT_UIN_MAX_LENGTH,
 } from '../techhub/techhub';
 
 export type TranslateValidationErrorFunction = (
@@ -113,6 +114,19 @@ export default memoize(function getCustomFormFieldsValidationSchema({
                             schema[name] = string()
                                 .trim()
                                 .required('Recipient UIN(s) or Name(s) cannot be blank')
+                                .test(
+                                    'techhub-recipient-uin-length',
+                                    `Recipient UIN(s) or Name(s) must be ${TECHHUB_RECIPIENT_UIN_MAX_LENGTH} characters or fewer`,
+                                    function validateRecipientUinLength(value) {
+                                        // Count the original input so trimming cannot hide excess spaces.
+                                        const input =
+                                            typeof this.originalValue === 'string'
+                                                ? this.originalValue
+                                                : value || '';
+
+                                        return input.length <= TECHHUB_RECIPIENT_UIN_MAX_LENGTH;
+                                    },
+                                )
                                 .matches(
                                     TECHHUB_ALLOWED_CHARACTERS,
                                     'Recipient UIN(s) or Name(s) contains invalid characters',

@@ -31,6 +31,7 @@ function getTechHubDeliveryLocationsUrl(): string {
 export const TECHHUB_DELIVERY_LOCATIONS_URL = getTechHubDeliveryLocationsUrl();
 
 export const TECHHUB_ALLOWED_CHARACTERS = /^[a-zA-Z0-9\-()$,. ]*$/;
+export const TECHHUB_RECIPIENT_UIN_MAX_LENGTH = 250;
 
 const TECHHUB_FIELD_LABELS = {
     accountNumber: 'Recipient Account Number(s) (comma separated)',
