@@ -16,12 +16,11 @@ import { isExperimentEnabled } from '@bigcommerce/checkout/utility';
 import { EMPTY_ARRAY, isFloatingLabelEnabled } from '../common/utility';
 import getProviderWithCustomCheckout from '../payment/getProviderWithCustomCheckout';
 import {
-    getTechHubFieldOptionLabel,
     getTechHubDeliveryLocations,
+    getTechHubFieldOptionLabel,
     isTechHubField,
     loadTechHubDeliveryLocations,
     shouldHideTechHubAddressField,
-    TECHHUB_RECIPIENT_UIN_MAX_LENGTH,
 } from '../techhub/techhub';
 
 import {
@@ -319,8 +318,9 @@ const AddressForm: React.FC<AddressFormProps> = ({
                                     addressFieldName,
                                 )}`}
                                 field={
-                                    isTechHubField(field, 'recipientUin')
-                                        ? { ...field, maxLength: TECHHUB_RECIPIENT_UIN_MAX_LENGTH }
+                                    isTechHubField(field, 'recipientUin') ||
+                                    isTechHubField(field, 'accountNumber')
+                                        ? { ...field, maxLength: undefined }
                                         : field
                                 }
                                 inputId={getAddressFormFieldInputId(addressFieldName)}
@@ -343,21 +343,6 @@ const AddressForm: React.FC<AddressFormProps> = ({
                                 selectedCountry={countryCode}
                             />
                         );
-
-                        if (isTechHubField(field, 'recipientUin')) {
-                            return (
-                                <div
-                                    className="techhub-recipient-uin"
-                                    key={`${field.id}-${field.name}`}
-                                >
-                                    {renderedField}
-                                    <p className="techhub-recipient-uin-help optimizedCheckout-contentSecondary">
-                                        Maximum {TECHHUB_RECIPIENT_UIN_MAX_LENGTH} characters{' '}
-                                        (including commas and spaces).
-                                    </p>
-                                </div>
-                            );
-                        }
 
                         if (isTechHubField(field, 'departmentCode')) {
                             return (
@@ -405,7 +390,9 @@ const AddressForm: React.FC<AddressFormProps> = ({
                                             deliveryLocationField,
                                         )}
                                         parentFieldName={getParentFieldName()}
-                                        placeholder={language.translate('common.please_select_text')}
+                                        placeholder={language.translate(
+                                            'common.please_select_text',
+                                        )}
                                         selectedCountry={countryCode}
                                     />
                                 ) : null;

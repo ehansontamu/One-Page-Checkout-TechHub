@@ -2,7 +2,7 @@
 
 This repository is a fork of `bigcommerce/checkout-js`. This document is the durable, AI-readable record of intentional differences from upstream. Keep it current whenever a TechHub-specific change is made. Do not add generated `build/` or `dist/` files to commits.
 
-Last reviewed against repository source: 2026-10-20. Build, testing, WebDAV upload, and rollback instructions are in [TECHHUB_BUILD_GUIDE.md](TECHHUB_BUILD_GUIDE.md). These documents describe the source behavior and required store configuration; they do not establish that the latest changes or JSON have been deployed.
+Last reviewed against repository source: 2026-10-26. Build, testing, WebDAV upload, and rollback instructions are in [TECHHUB_BUILD_GUIDE.md](TECHHUB_BUILD_GUIDE.md). These documents describe the source behavior and required store configuration; they do not establish that the latest changes or JSON have been deployed.
 
 ## Operating rules
 
@@ -23,7 +23,7 @@ Last reviewed against repository source: 2026-10-20. Build, testing, WebDAV uplo
 ### TechHub address fields
 
 - The recipient College/Unit, recipient UIN/name, recipient account number, and department-code fields are recognized by their labels.
-- Recipient UIN(s) or Name(s) is limited to 250 characters for the whole field, including commas and spaces. Checkout applies a textarea maximum and validates the original input length, while retaining the existing required-field and allowed-character rules. Helper text explains the limit. This policy matches the field by label so it works with different Test and production IDs.
+- Recipient UIN(s) or Name(s) and Recipient Account Number(s) are each limited to 250 characters for the whole field, including commas and spaces. The limits are not shown as permanent helper text and the textareas do not silently truncate input; checkout displays an inline validation error only after the entered value exceeds 250 characters. Existing required-field and allowed-character rules remain in place. These policies match fields by label so they work with different Test and production IDs.
 - Department codes are validated against `https://store-jsj7fos9p1.mybigcommerce.com/content/JSON%20Files/TechhubDeptOutputBig.json`.
 - A department-code lookup prompt and button appear directly below the department-code field. The button opens `https://store-jsj7fos9p1.mybigcommerce.com/content/Department%20Lookup%20Tool/index.html`.
 - Delivery Location is a dependent address field: after a shopper chooses Recipient College/Unit, it becomes a required dropdown only when external location data contains valid options for that unit. It stores only its own field value and does not alter the address.
@@ -38,15 +38,15 @@ These are User Defined **Address Fields**, not Account Signup Fields. Keep the l
 | --- | --- | --- |
 | `Recipient College/Unit` | Pick List | Requires a selection. The selected option's display label determines which JSON group supplies locations. |
 | `Delivery Location` | Text Field, non-required in store configuration | Checkout renders a required dropdown when the selected unit has locations; otherwise hides it. Changing College/Unit clears the selected location. |
-| `Recipient UIN(s) or Name(s) (comma separated)` | Multiline Text Field | Required, with a 250-character total limit applied in the textarea and validation. Counts commas and spaces, including leading/trailing spaces in the original input. |
-| `Recipient Account Number(s) (comma separated)` | Multiline Text Field | Applies the TechHub allowed-character rule; required status otherwise comes from store configuration. |
+| `Recipient UIN(s) or Name(s) (comma separated)` | Multiline Text Field | Required, with an inline validation error when input exceeds the 250-character total limit. Counts commas and spaces, including leading/trailing spaces in the original input. |
+| `Recipient Account Number(s) (comma separated)` | Multiline Text Field | Applies the TechHub allowed-character rule and an inline validation error when input exceeds the 250-character total limit. Required status otherwise comes from store configuration. |
 | `Department Code (include system part prefix, e.g. 02-ABCD)` | Text Field | Validates against the external department-code list and offers the lookup button. |
 
 - Built-in first/last name, address lines, city, country, state/province, and postcode remain standard address properties. Company and phone are hidden by checkout. TechHub restricts Address Line 1, Address Line 2, city, postcode, recipient UIN/name, and account numbers to letters `A-Z`/`a-z`, digits, hyphen, parentheses, `$`, comma, period, and ordinary spaces. Newlines, apostrophes, and other characters do not pass that rule.
 - `AddressForm.tsx` places custom inputs under the address's `customFields`. `mapAddressFromFormValues.ts` and `mapCustomFormFieldsFromFormValues.ts` map those values to BigCommerce's `{ fieldId, fieldValue }` entries. The selected Delivery Location is **one field** containing building and room joined with an em dash, e.g. `LAAH — 425`; if room is blank, only the building/location name is stored. It does not rewrite Address Line 1, Address Line 2, city, or postcode.
 - The normal single-shipping flow submits the custom address values through the Checkout SDK and copies the shipping address to billing when the payment method does not supply remote billing. No customer address-book save is requested. Inspect a Test order to verify the resulting values in BigCommerce and downstream order consumers after a deployment.
 - No separate Delivery Notes custom address field or automatic mapping of JSON `notes` exists. The whitelist notes are not displayed, included in Delivery Location, or sent as an order comment. The source still supports BigCommerce's separate order-comment control when store settings enable it; that is independent of whitelist notes.
-- The UIN/name limit is a checkout input/validation policy, not a demonstrated BigCommerce server-side constraint. The limit constant lives in `techhub.ts`; input/helper rendering is in `AddressForm.tsx` and `AddressForm.scss`; original-value validation is in `getCustomFormFieldsValidationSchema.ts`. Focused tests cover the boundary and label matching across different IDs. Those tests were added on Windows without installed dependencies, so run them in Linux before treating the feature as validated.
+- The recipient UIN/name and account-number limits are checkout validation policies, not demonstrated BigCommerce server-side constraints. The shared limit constant lives in `techhub.ts`; original-value validation is in `getCustomFormFieldsValidationSchema.ts`. Focused tests cover both boundaries, absence of permanent helper text/input truncation, and label matching across different IDs.
 
 ### Address and checkout-session policy
 
@@ -91,8 +91,8 @@ These are User Defined **Address Fields**, not Account Signup Fields. Keep the l
 
 | Area | Primary source |
 | --- | --- |
-| Field labels, allowed characters, UIN limit constant, JSON URLs, location formatting/sorting | `packages/core/src/app/techhub/techhub.ts` |
-| Custom-field display, dependent dropdown, UIN input limit/help text, lookup button | `packages/core/src/app/address/AddressForm.tsx`, `AddressForm.scss` |
+| Field labels, allowed characters, recipient-field limit constant, JSON URLs, location formatting/sorting | `packages/core/src/app/techhub/techhub.ts` |
+| Custom-field display, dependent dropdown, and lookup button | `packages/core/src/app/address/AddressForm.tsx`, `AddressForm.scss` |
 | Custom and built-in field validation | `packages/core/src/app/formFields/getCustomFormFieldsValidationSchema.ts`, `getFormFieldsValidationSchema.ts` |
 | Address submission format and disabling address-book saves | `packages/core/src/app/address/mapAddressFromFormValues.ts`, `packages/core/src/app/formFields/mapCustomFormFieldsFromFormValues.ts` |
 | Checkout session reset before rendering | `packages/core/src/app/checkout/hooks/useLoadCheckout.ts` |
@@ -112,6 +112,7 @@ These are User Defined **Address Fields**, not Account Signup Fields. Keep the l
 
 | Date | Purpose | Affected source | Store dependency |
 | --- | --- | --- | --- |
+| 2026-10-26 | Changed the Recipient UIN/name character-limit UX and applied the same 250-character rule to Recipient Account Number(s): no permanent helper line or browser `maxlength`, with an inline validation error when either input exceeds 250 characters. | `techhub.ts`, `AddressForm.tsx`, `AddressForm.scss`, custom-field validation, focused tests, and documentation | Rebuild and deploy checkout; recipient field labels must match, but no store configuration change is needed. |
 | 2026-10-20 | Added an AI-readable Linux build/deployment guide, updated the README for TechHub's workflow, and expanded the address-field and whitelist data contracts, including current notes behavior and verification requirements. | `README.md`, `TECHHUB_BUILD_GUIDE.md`, `TECHHUB_CUSTOMIZATIONS.md` | Inspect actual store loader URLs and WebDAV asset folders before deployment; the guide does not record a completed release. |
 | 2026-10-20 | Limited Recipient UIN(s) or Name(s) to 250 characters with input enforcement, form validation, and helper text. | `techhub.ts`, `AddressForm.tsx`, `AddressForm.scss`, `getCustomFormFieldsValidationSchema.ts`, focused address and validation tests | Rebuild and deploy checkout; the Recipient UIN/name label must match in both stores. No BigCommerce field-ID change is needed. |
 | 2026-10-19 | Stored the supplied CSV as a reusable delivery-location whitelist reference, preserving all rows and values in the existing runtime format. | `data/checkout_address_whitelist.json`, `TECHHUB_CUSTOMIZATIONS.md` | Upload the JSON separately to the configured Test and production WebDAV content paths; adding the reference does not deploy it. |

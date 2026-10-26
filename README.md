@@ -93,7 +93,7 @@ Delivery Location is one custom address field containing building and room toget
 
 ## Maintaining this fork
 
-Preserve the customizations record during upgrades, including the dependent delivery dropdown, 250-character UIN/name limit, fixed-billing policy, checkout-session reset, Details confirmation gate, runtime-safe extension constants, and stylesheet load order. Match custom fields by their display labels rather than hardcoded store-specific IDs.
+Preserve the customizations record during upgrades, including the dependent delivery dropdown, 250-character recipient UIN/name and account-number limits, fixed-billing policy, checkout-session reset, Details confirmation gate, runtime-safe extension constants, and stylesheet load order. Match custom fields by their display labels rather than hardcoded store-specific IDs.
 
 Update the TechHub documents when source behavior, build steps, or store dependencies change. Record actual build/test/deployment results separately from intended behavior.
 

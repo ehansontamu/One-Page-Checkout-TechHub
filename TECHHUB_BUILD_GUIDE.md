@@ -54,7 +54,7 @@ npm run generate
 
 The normal Nx build also depends on this generation step. Generated files under `packages/**/generated` are ignored and must not be maintained by hand.
 
-For the recipient UIN/name limit, run the focused tests:
+For the recipient UIN/name and account-number limits, run the focused tests:
 
 ```bash
 npx jest --config=packages/core/jest.config.js --runInBand --runTestsByPath \
@@ -62,7 +62,7 @@ npx jest --config=packages/core/jest.config.js --runInBand --runTestsByPath \
   packages/core/src/app/formFields/getCustomFormFieldsValidationSchema.test.tsx
 ```
 
-These cover the rendered textarea maximum, different field IDs, exactly 250 characters, oversized input including leading/trailing spaces, and the existing required/allowed-character rules. The UIN change's tests were added on Windows but could not be executed there because repository dependencies were not installed. Run them in Linux and report the actual result; do not treat their existence as a passing test run.
+These cover the absence of permanent helper/input caps, different field IDs, exactly 250 characters, oversized input including leading/trailing spaces, optional account-number behavior, and the existing required/allowed-character rules.
 
 Choose additional checks for the changed area:
 
@@ -145,7 +145,7 @@ On a fresh Test checkout, verify:
 
 - `Order Summary`, `Details`, and `Shipping and Billing Info` labels; centered header on desktop and mobile; company/phone fields hidden.
 - Recipient College/Unit selection produces the expected locations. Building and room are stored in one custom address field; units with no valid locations leave Delivery Location hidden. Changing College/Unit clears the prior selection. Valid location choices make the field required.
-- The UIN/name field shows the 250-character helper text. Typing/pasting cannot exceed 250; validation rejects oversized values introduced programmatically. Required-field and allowed-character checks still work.
+- The UIN/name and account-number fields do not show permanent character-limit helper text. Each accepts exactly 250 characters; entering character 251 displays its inline validation error, and existing required/optional and allowed-character checks still work.
 - Department-code validation and the lookup button work, and all JSON requests use the correct environment URLs.
 - Saved-address selectors/save controls stay absent, billing follows shipping in the normal flow, and a fresh checkout visit resets previous checkout details and requires Continue in Details.
 - The terms link opens the corresponding store's `/terms-and-conditions/` page.

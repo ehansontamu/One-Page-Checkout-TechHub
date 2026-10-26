@@ -15,12 +15,12 @@ import {
 import { DynamicFormFieldType } from '@bigcommerce/checkout/ui';
 
 import {
-    isTechHubDepartmentCodeValid,
-    isTechHubDeliveryLocationRequired,
-    isTechHubField,
     getTechHubFieldOptionLabel,
+    isTechHubDeliveryLocationRequired,
+    isTechHubDepartmentCodeValid,
+    isTechHubField,
     TECHHUB_ALLOWED_CHARACTERS,
-    TECHHUB_RECIPIENT_UIN_MAX_LENGTH,
+    TECHHUB_RECIPIENT_FIELD_MAX_LENGTH,
 } from '../techhub/techhub';
 
 export type TranslateValidationErrorFunction = (
@@ -116,7 +116,7 @@ export default memoize(function getCustomFormFieldsValidationSchema({
                                 .required('Recipient UIN(s) or Name(s) cannot be blank')
                                 .test(
                                     'techhub-recipient-uin-length',
-                                    `Recipient UIN(s) or Name(s) must be ${TECHHUB_RECIPIENT_UIN_MAX_LENGTH} characters or fewer`,
+                                    `Recipient UIN(s) or Name(s) must be ${TECHHUB_RECIPIENT_FIELD_MAX_LENGTH} characters or fewer`,
                                     function validateRecipientUinLength(value) {
                                         // Count the original input so trimming cannot hide excess spaces.
                                         const input =
@@ -124,7 +124,7 @@ export default memoize(function getCustomFormFieldsValidationSchema({
                                                 ? this.originalValue
                                                 : value || '';
 
-                                        return input.length <= TECHHUB_RECIPIENT_UIN_MAX_LENGTH;
+                                        return input.length <= TECHHUB_RECIPIENT_FIELD_MAX_LENGTH;
                                     },
                                 )
                                 .matches(
@@ -134,10 +134,24 @@ export default memoize(function getCustomFormFieldsValidationSchema({
                         }
 
                         if (isTechHubField({ label }, 'accountNumber')) {
-                            schema[name] = string().matches(
-                                TECHHUB_ALLOWED_CHARACTERS,
-                                'Recipient Account Number(s) contains invalid characters',
-                            );
+                            schema[name] = string()
+                                .test(
+                                    'techhub-recipient-account-number-length',
+                                    `Recipient Account Number(s) must be ${TECHHUB_RECIPIENT_FIELD_MAX_LENGTH} characters or fewer`,
+                                    function validateRecipientAccountNumberLength(value) {
+                                        // Count the original input so trimming cannot hide excess spaces.
+                                        const input =
+                                            typeof this.originalValue === 'string'
+                                                ? this.originalValue
+                                                : value || '';
+
+                                        return input.length <= TECHHUB_RECIPIENT_FIELD_MAX_LENGTH;
+                                    },
+                                )
+                                .matches(
+                                    TECHHUB_ALLOWED_CHARACTERS,
+                                    'Recipient Account Number(s) contains invalid characters',
+                                );
                         }
 
                         if (isTechHubField({ label }, 'collegeUnit')) {

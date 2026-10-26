@@ -31,7 +31,7 @@ function getTechHubDeliveryLocationsUrl(): string {
 export const TECHHUB_DELIVERY_LOCATIONS_URL = getTechHubDeliveryLocationsUrl();
 
 export const TECHHUB_ALLOWED_CHARACTERS = /^[a-zA-Z0-9\-()$,. ]*$/;
-export const TECHHUB_RECIPIENT_UIN_MAX_LENGTH = 250;
+export const TECHHUB_RECIPIENT_FIELD_MAX_LENGTH = 250;
 
 const TECHHUB_FIELD_LABELS = {
     accountNumber: 'Recipient Account Number(s) (comma separated)',
@@ -61,7 +61,10 @@ function normalizeLabel(label?: string): string {
 }
 
 function getDeliveryLocationLabel({ building, room }: TechHubDeliveryLocationEntry): string {
-    return [building, room].map((value) => normalizeLabel(value)).filter(Boolean).join(' — ');
+    return [building, room]
+        .map((value) => normalizeLabel(value))
+        .filter(Boolean)
+        .join(' — ');
 }
 
 function sortDeliveryLocationLabels(locations: string[]): string[] {
@@ -136,7 +139,9 @@ export function loadTechHubDepartmentCodes(): Promise<string[]> {
 
 export function loadTechHubDeliveryLocations(): Promise<TechHubDeliveryLocations> {
     if (!TECHHUB_DELIVERY_LOCATIONS_URL) {
-        return Promise.reject(new Error('A TechHub delivery-locations URL has not been configured'));
+        return Promise.reject(
+            new Error('A TechHub delivery-locations URL has not been configured'),
+        );
     }
 
     if (!deliveryLocationsPromise) {
@@ -157,7 +162,9 @@ export function loadTechHubDeliveryLocations(): Promise<TechHubDeliveryLocations
                                 new Set(
                                     locations
                                         .map(getDeliveryLocationLabel)
-                                        .filter((location): location is string => Boolean(location)),
+                                        .filter((location): location is string =>
+                                            Boolean(location),
+                                        ),
                                 ),
                             ),
                         ),

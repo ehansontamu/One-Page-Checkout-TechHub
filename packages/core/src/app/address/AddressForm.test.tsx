@@ -79,42 +79,42 @@ describe('AddressForm Component', () => {
         expect(formFields.length).toEqual(7);
     });
 
-    it.each(['field_52', 'field_999'])(
-        'limits the TechHub recipient UIN textarea by label for %s',
-        (name) => {
-            const label = 'Recipient UIN(s) or Name(s) (comma separated)';
+    it.each([
+        ['field_52', 'Recipient UIN(s) or Name(s) (comma separated)'],
+        ['field_999', 'Recipient UIN(s) or Name(s) (comma separated)'],
+        ['field_44', 'Recipient Account Number(s) (comma separated)'],
+        ['field_998', 'Recipient Account Number(s) (comma separated)'],
+    ])('lets validation report the TechHub recipient field limit for %s', (name, label) => {
+        renderAddressFormComponent({
+            fieldName: 'shippingAddress',
+            formFields: [
+                ...formFields,
+                {
+                    custom: true,
+                    default: '',
+                    fieldType: 'multiline',
+                    id: name,
+                    label,
+                    maxLength: 1000,
+                    name,
+                    required: true,
+                    type: 'string',
+                },
+            ],
+        });
 
-            renderAddressFormComponent({
-                fieldName: 'shippingAddress',
-                formFields: [
-                    ...formFields,
-                    {
-                        custom: true,
-                        default: '',
-                        fieldType: 'multiline',
-                        id: name,
-                        label,
-                        maxLength: 1000,
-                        name,
-                        required: true,
-                        type: 'string',
-                    },
-                ],
-            });
+        const input = screen.getByRole('textbox', { name: label });
 
-            const input = screen.getByRole('textbox', { name: label });
-
-            expect(input.tagName).toBe('TEXTAREA');
-            expect(input).toHaveAttribute('maxlength', '250');
-            expect(input).toHaveAttribute('name', `shippingAddress.customFields.${name}`);
-            expect(
-                screen.getByText('Maximum 250 characters (including commas and spaces).'),
-            ).toBeInTheDocument();
-            expect(screen.getByRole('textbox', { name: /Custom message/ })).not.toHaveAttribute(
-                'maxlength',
-            );
-        },
-    );
+        expect(input.tagName).toBe('TEXTAREA');
+        expect(input).not.toHaveAttribute('maxlength');
+        expect(input).toHaveAttribute('name', `shippingAddress.customFields.${name}`);
+        expect(
+            screen.queryByText('Maximum 250 characters (including commas and spaces).'),
+        ).not.toBeInTheDocument();
+        expect(screen.getByRole('textbox', { name: /Custom message/ })).not.toHaveAttribute(
+            'maxlength',
+        );
+    });
 
     it('renders address form with save address checkbox', () => {
         renderAddressFormComponent({
